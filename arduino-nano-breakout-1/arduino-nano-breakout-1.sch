@@ -148,16 +148,7 @@ Wire Wire Line
 Wire Wire Line
 	6650 3300 6750 3300
 Wire Wire Line
-	5250 2100 5250 2650
-Wire Wire Line
-	6400 3900 6400 2650
-Wire Wire Line
-	6400 2650 5250 2650
-Wire Wire Line
 	6400 3900 6750 3900
-Connection ~ 5250 2650
-Wire Wire Line
-	5250 2650 5250 2800
 Wire Wire Line
 	6400 4000 6400 4800
 Wire Wire Line
@@ -181,4 +172,11 @@ Wire Wire Line
 	6650 3700 6750 3700
 Wire Wire Line
 	6650 3800 6750 3800
+Wire Wire Line
+	5250 2100 5250 2800
+Wire Wire Line
+	6400 3900 6400 2200
+Wire Wire Line
+	6400 2200 5150 2200
+Connection ~ 5150 2200
 $EndSCHEMATC
