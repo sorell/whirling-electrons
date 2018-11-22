@@ -21,7 +21,7 @@ P 4250 2300
 F 0 "J1" H 4219 2640 50  0000 C CNN
 F 1 "PJ-002A" H 4219 2549 50  0000 C CNN
 F 2 "CUI_PJ-002A" H 4250 2300 50  0001 L BNN
-F 3 "Manufacturer recommendations" H 4250 2300 50  0001 L BNN
+F 3 "https://www.digikey.fi/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962" H 4250 2300 50  0001 L BNN
 F 4 "CUI INC" H 4250 2300 50  0001 L BNN "Field4"
 	1    4250 2300
 	1    0    0    -1  
