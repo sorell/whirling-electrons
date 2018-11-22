@@ -15,17 +15,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_Module:Arduino_Nano_v3.x A1
-U 1 1 5BF57DB9
-P 5050 3800
-F 0 "A1" H 5050 2714 50  0000 C CNN
-F 1 "Arduino_Nano_v3.x" H 5050 2623 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 5200 2850 50  0001 L CNN
-F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 5050 2800 50  0001 C CNN
-	1    5050 3800
-	1    0    0    -1  
-$EndComp
-$Comp
 L SS_connectors:PJ-002A J1
 U 1 1 5BF57EB7
 P 4250 2300
@@ -53,33 +42,14 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0101
 U 1 1 5BF59927
-P 5200 5150
-F 0 "#PWR0101" H 5200 4900 50  0001 C CNN
-F 1 "GND" H 5205 4977 50  0000 C CNN
-F 2 "" H 5200 5150 50  0001 C CNN
-F 3 "" H 5200 5150 50  0001 C CNN
-	1    5200 5150
+P 5150 5150
+F 0 "#PWR0101" H 5150 4900 50  0001 C CNN
+F 1 "GND" H 5155 4977 50  0000 C CNN
+F 2 "" H 5150 5150 50  0001 C CNN
+F 3 "" H 5150 5150 50  0001 C CNN
+	1    5150 5150
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:GND #PWR0102
-U 1 1 5BF59956
-P 5000 5150
-F 0 "#PWR0102" H 5000 4900 50  0001 C CNN
-F 1 "GND" H 5005 4977 50  0000 C CNN
-F 2 "" H 5000 5150 50  0001 C CNN
-F 3 "" H 5000 5150 50  0001 C CNN
-	1    5000 5150
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5200 4800 5200 5150
-Wire Wire Line
-	5000 4800 5000 5150
-Wire Wire Line
-	5200 4800 5150 4800
-Wire Wire Line
-	5050 4800 5000 4800
 $Comp
 L power:GND #PWR0103
 U 1 1 5BF59B46
@@ -102,18 +72,16 @@ Wire Wire Line
 	5050 2100 5050 2650
 Wire Wire Line
 	5050 2650 4950 2650
-Wire Wire Line
-	4950 2650 4950 2800
 $Comp
 L Connector:Conn_01x08_Male J4
 U 1 1 5BF5B051
-P 6950 3700
-F 0 "J4" H 6923 3580 50  0000 R CNN
-F 1 "Conn_01x08_Male" H 6923 3671 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 6950 3700 50  0001 C CNN
-F 3 "~" H 6950 3700 50  0001 C CNN
-	1    6950 3700
-	-1   0    0    1   
+P 7300 3700
+F 0 "J4" H 7273 3580 50  0000 R CNN
+F 1 "Conn_01x08_Male" H 7273 3671 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 7300 3700 50  0001 C CNN
+F 3 "~" H 7300 3700 50  0001 C CNN
+	1    7300 3700
+	-1   0    0    -1  
 $EndComp
 Text GLabel 4250 3400 0    50   Input ~ 0
 IO2
@@ -139,44 +107,150 @@ Wire Wire Line
 	4250 4100 4550 4100
 Wire Wire Line
 	4400 4200 4550 4200
-Text GLabel 6650 3300 0    50   Input ~ 0
+Text GLabel 7000 3900 0    50   Input ~ 0
 IO10
-Text GLabel 6650 3400 0    50   Input ~ 0
+Text GLabel 7000 3800 0    50   Input ~ 0
 IO9
 Wire Wire Line
-	6650 3400 6750 3400
+	7000 3800 7100 3800
 Wire Wire Line
-	6650 3300 6750 3300
-Wire Wire Line
-	6400 3900 6750 3900
-Wire Wire Line
-	6400 4000 6400 4800
-Wire Wire Line
-	6400 4800 5200 4800
-Wire Wire Line
-	6400 4000 6750 4000
-Connection ~ 5200 4800
-Text GLabel 6650 3500 0    50   Input ~ 0
+	7000 3900 7100 3900
+Text GLabel 6500 4000 1    50   Input ~ 0
 IO6
-Text GLabel 6650 3600 0    50   Input ~ 0
+Text GLabel 6250 3900 1    50   Input ~ 0
 IO5
-Text GLabel 6650 3700 0    50   Input ~ 0
+Text GLabel 6000 3700 1    50   Input ~ 0
 IO3
-Text GLabel 6650 3800 0    50   Input ~ 0
+Text GLabel 5750 3600 1    50   Input ~ 0
 IO2
 Wire Wire Line
-	6650 3500 6750 3500
-Wire Wire Line
-	6650 3600 6750 3600
-Wire Wire Line
-	6650 3700 6750 3700
-Wire Wire Line
-	6650 3800 6750 3800
-Wire Wire Line
 	5250 2100 5250 2800
-Wire Wire Line
-	6400 3900 6400 2200
-Wire Wire Line
-	6400 2200 5150 2200
 Connection ~ 5150 2200
+Wire Wire Line
+	6750 4100 7100 4100
+$Comp
+L power:GND #PWR0104
+U 1 1 5BF6D124
+P 6950 4250
+F 0 "#PWR0104" H 6950 4000 50  0001 C CNN
+F 1 "GND" H 6955 4077 50  0000 C CNN
+F 2 "" H 6950 4250 50  0001 C CNN
+F 3 "" H 6950 4250 50  0001 C CNN
+	1    6950 4250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7100 4000 6950 4000
+Wire Wire Line
+	6950 4000 6950 4250
+$Comp
+L Jumper:SolderJumper_3_Open JP1
+U 1 1 5BF6F90F
+P 5750 3800
+F 0 "JP1" V 5796 3868 50  0000 L CNN
+F 1 "SolderJumper_3_Open" V 5705 3868 50  0000 L CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm" H 5750 3800 50  0001 C CNN
+F 3 "~" H 5750 3800 50  0001 C CNN
+	1    5750 3800
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6750 2200 6750 4100
+Wire Wire Line
+	5550 4000 5750 4000
+Wire Wire Line
+	5900 3800 5900 3400
+$Comp
+L Jumper:SolderJumper_3_Open JP2
+U 1 1 5BF73B3B
+P 6000 3900
+F 0 "JP2" V 6046 3968 50  0000 L CNN
+F 1 "SolderJumper_3_Open" V 5955 3968 50  0000 L CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm" H 6000 3900 50  0001 C CNN
+F 3 "~" H 6000 3900 50  0001 C CNN
+	1    6000 3900
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6000 4100 5550 4100
+Wire Wire Line
+	6150 3500 6150 3900
+$Comp
+L Jumper:SolderJumper_3_Open JP3
+U 1 1 5BF74A7B
+P 6250 4100
+F 0 "JP3" V 6296 4168 50  0000 L CNN
+F 1 "SolderJumper_3_Open" V 6205 4168 50  0000 L CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm" H 6250 4100 50  0001 C CNN
+F 3 "~" H 6250 4100 50  0001 C CNN
+	1    6250 4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Jumper:SolderJumper_3_Open JP4
+U 1 1 5BF74AAB
+P 6500 4200
+F 0 "JP4" V 6546 4268 50  0000 L CNN
+F 1 "SolderJumper_3_Open" V 6455 4268 50  0000 L CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm" H 6500 4200 50  0001 C CNN
+F 3 "~" H 6500 4200 50  0001 C CNN
+	1    6500 4200
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6250 4300 5550 4300
+Wire Wire Line
+	6500 4400 5550 4400
+Wire Wire Line
+	5900 3400 7100 3400
+Wire Wire Line
+	6150 3500 7100 3500
+Wire Wire Line
+	5150 2200 6750 2200
+Wire Wire Line
+	6400 3600 6400 4100
+Wire Wire Line
+	6400 3600 7100 3600
+Wire Wire Line
+	6650 3700 6650 4200
+Wire Wire Line
+	6650 3700 7100 3700
+$Comp
+L MCU_Module:Arduino_Nano_v3.x A1
+U 1 1 5BF57DB9
+P 5050 3800
+F 0 "A1" H 5050 2714 50  0000 C CNN
+F 1 "Arduino_Nano_v3.x" H 5050 2623 50  0000 C CNN
+F 2 "Module:Arduino_Nano" H 5200 2850 50  0001 L CNN
+F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 5050 2800 50  0001 C CNN
+	1    5050 3800
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4550 3200
+NoConn ~ 4550 3300
+NoConn ~ 4550 3600
+NoConn ~ 4550 3900
+NoConn ~ 4550 4000
+NoConn ~ 4550 4300
+NoConn ~ 4550 4400
+NoConn ~ 4550 4500
+NoConn ~ 5550 4500
+NoConn ~ 5550 4200
+NoConn ~ 5550 3900
+NoConn ~ 5550 3800
+NoConn ~ 5550 3600
+NoConn ~ 5550 3300
+NoConn ~ 5550 3200
+NoConn ~ 5150 2800
+Wire Wire Line
+	4950 2650 4950 2800
+Wire Wire Line
+	5050 4800 5050 4850
+Wire Wire Line
+	5050 4850 5150 4850
+Wire Wire Line
+	5150 4850 5150 4800
+Wire Wire Line
+	5150 4850 5150 5150
+Connection ~ 5150 4850
 $EndSCHEMATC
