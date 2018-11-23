@@ -5,8 +5,8 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
+Title "Arduino Mini Breakout"
+Date "2018-11-23"
 Rev ""
 Comp ""
 Comment1 ""
@@ -40,39 +40,22 @@ Wire Wire Line
 	4450 2400 4550 2400
 Wire Wire Line
 	4550 2400 4550 2500
-$Comp
-L Connector:Conn_01x08_Male J4
-U 1 1 5BF5B051
-P 7300 3700
-F 0 "J4" H 7273 3580 50  0000 R CNN
-F 1 "Conn_01x08_Male" H 7273 3671 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 7300 3700 50  0001 C CNN
-F 3 "~" H 7300 3700 50  0001 C CNN
-	1    7300 3700
-	-1   0    0    -1  
-$EndComp
-Text GLabel 4250 3400 0    50   Input ~ 0
+Text GLabel 4400 3400 0    50   Input ~ 0
 D2
-Wire Wire Line
-	4250 3400 4550 3400
 Text GLabel 4400 3500 0    50   Input ~ 0
 D3
 Wire Wire Line
 	4550 3500 4400 3500
-Text GLabel 4250 3700 0    50   Input ~ 0
+Text GLabel 4400 3700 0    50   Input ~ 0
 D5
 Text GLabel 4400 3800 0    50   Input ~ 0
 D6
 Wire Wire Line
-	4250 3700 4550 3700
-Wire Wire Line
 	4400 3800 4550 3800
-Text GLabel 4250 4100 0    50   Input ~ 0
+Text GLabel 4400 4100 0    50   Input ~ 0
 D9
 Text GLabel 4400 4200 0    50   Input ~ 0
 D10
-Wire Wire Line
-	4250 4100 4550 4100
 Wire Wire Line
 	4400 4200 4550 4200
 Text GLabel 7000 3900 0    50   Input ~ 0
@@ -178,19 +161,6 @@ Wire Wire Line
 	6650 3700 6650 4200
 Wire Wire Line
 	6650 3700 7100 3700
-$Comp
-L MCU_Module:Arduino_Nano_v3.x A1
-U 1 1 5BF57DB9
-P 5050 3800
-F 0 "A1" H 5050 2714 50  0000 C CNN
-F 1 "Arduino_Nano_v3.x" H 5050 2623 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 5200 2850 50  0001 L CNN
-F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 5050 2800 50  0001 C CNN
-	1    5050 3800
-	1    0    0    -1  
-$EndComp
-NoConn ~ 4550 3200
-NoConn ~ 4550 3300
 NoConn ~ 4550 3600
 NoConn ~ 4550 3900
 NoConn ~ 4550 4000
@@ -294,7 +264,7 @@ F 1 "Conn_01x05_Male" V 5101 2040 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 4950 1800 50  0001 C CNN
 F 3 "~" H 4950 1800 50  0001 C CNN
 	1    4950 1800
-	0    1    1    0   
+	0    -1   1    0   
 $EndComp
 Wire Wire Line
 	4550 2400 4550 2100
@@ -320,4 +290,48 @@ Wire Wire Line
 Wire Wire Line
 	4750 2100 4750 2000
 NoConn ~ 4850 2000
+$Comp
+L Connector:Conn_01x10_Male J3
+U 1 1 5BF89C91
+P 7300 3700
+F 0 "J3" H 7273 3580 50  0000 R CNN
+F 1 "Conn_01x10_Male" H 7273 3671 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical" H 7300 3700 50  0001 C CNN
+F 3 "~" H 7300 3700 50  0001 C CNN
+	1    7300 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L MCU_Module:Arduino_Nano_v3.x A1
+U 1 1 5BF57DB9
+P 5050 3800
+F 0 "A1" H 5050 2714 50  0000 C CNN
+F 1 "Arduino_Nano_v3.x" H 5050 2623 50  0000 C CNN
+F 2 "Module:Arduino_Nano" H 5200 2850 50  0001 L CNN
+F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 5050 2800 50  0001 C CNN
+	1    5050 3800
+	1    0    0    -1  
+$EndComp
+Text GLabel 4400 3200 0    50   Input ~ 0
+D0
+Text GLabel 4400 3300 0    50   Input ~ 0
+D1
+Wire Wire Line
+	4400 3200 4550 3200
+Wire Wire Line
+	4400 3300 4550 3300
+Wire Wire Line
+	4400 3400 4550 3400
+Wire Wire Line
+	4400 3700 4550 3700
+Wire Wire Line
+	4400 4100 4550 4100
+Text GLabel 7000 3200 0    50   Input ~ 0
+D0
+Text GLabel 7000 3300 0    50   Input ~ 0
+D1
+Wire Wire Line
+	7000 3200 7100 3200
+Wire Wire Line
+	7100 3300 7000 3300
 $EndSCHEMATC
