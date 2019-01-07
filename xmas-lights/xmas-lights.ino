@@ -1,8 +1,8 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 260
+#define NUM_LEDS 300
 #define DATA_PIN 9
-#define MAX_BRIGHT 30
+#define MAX_BRIGHT 130
 
 
 static CRGB leds[NUM_LEDS];
@@ -58,29 +58,57 @@ private:
 };
 
 
-class Hilight {
+template <int SIZE>
+class ColorWorm {
 public:
-		Hilight() : diff_({10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10}), size_(sizeof(diff_)/sizeof(diff_[0])) {
-			// diff_[0] = 15; diff_[1] = 30; diff_[2] = 45; diff_[3] = 60; diff_[4] = 45; diff_[5] = 30; diff_[6] = 15;
+	ColorWorm(int8_t const min, int8_t const max, int8_t start, int8_t step) {
+		int8_t percent = start;
+
+		for (int i=0; i<SIZE; ++i) {
+			percent_[i] = percent;
+			int8_t next = percent + step;
+			if (next > max  ||  next < min) {
+				step *= -1;
+				next = percent + step;
+			}
+			percent = next;
 		}
-public:
-	int8_t const diff_[19];
-	int const size_;
+	}
+
+	int8_t percent(int const idx) const { return percent_[idx]; }
+	int size(void) const { return SIZE; }
+
+	void show(void) const {
+		Serial.print("ColorWorm<");
+		Serial.print(this->size());
+		Serial.print(">: ");
+		for (int i=0; i<this->size(); ++i) {
+			Serial.print(this->percent(i));
+			Serial.print(", ");
+		}
+		Serial.println("");
+	}
+
+private:
+	int8_t percent_[SIZE];
 };
+
 
 static SquaredVal const squaredVal;
 
 static CRGB const black = {.red = 0, .green = 0, .blue = 0};
 static ColorRange const pink = {CrbgInit(255, 110, 199), CrbgInit(26, 11, 20)};
+static ColorRange const purple = {CrbgInit(139, 0, 139), CrbgInit(14, 0, 14)};
 // static ColorRange const forest = {CrbgInit(57, 255, 20), CrbgInit(6, 26, 2)};
 static ColorRange const forest = {CrbgInit(0x49, 0xE2, 0x0E), CrbgInit(0x55, 0x10, 0x33)};
 static ColorRange const ocean = {CrbgInit(0, 180, 255), CrbgInit(0, 18, 26)};
 static ColorRange const autumn = {CrbgInit(255, 0, 0), CrbgInit(255, 255, 0)};
+static ColorRange const red = {CrbgInit(255, 0, 0), CrbgInit(0, 0, 0)};
+static ColorRange const green = {CrbgInit(0, 255, 0), CrbgInit(0, 0, 0)};
+static ColorRange const blue = {CrbgInit(0, 0, 255), CrbgInit(0, 0, 0)};
 
 static int8_t const colorInc = 2;
 
-
-static bool stop = false;
 
 
 class LedState {
@@ -111,10 +139,11 @@ private:
 	int8_t direction_;
 };
 
+
 // static LedState ledState[NUM_LEDS];
 static unsigned long const changeWindow = 5000;
 static unsigned long nextChange;
-static Hilight hilight;
+static ColorWorm<37> hilight(10, 100, 10, 5);
 
 void setup() {
 	Serial.begin(115200);
@@ -129,13 +158,39 @@ void setup() {
 	// }
 
 	nextChange = millis() + changeWindow;
+	hilight.show();
 }
 
 
 void loop() {
-	static int hilightPos = -hilight.size_;
+#if 0
+	static int percent = 100;
 	static uint8_t c = 0;
-	static ColorRange const *colors[] = {&forest, &autumn, &ocean, &pink};
+	static ColorRange const *colors[] = {&red, &green, &blue};
+
+	for (int i=0; i<NUM_LEDS; ++i) {
+		leds[i] = colors[c]->percent(percent);
+	}
+
+	percent -= 5;
+	if (percent == 0) {
+		percent = 100;
+		if (++c >= (uint8_t) (sizeof(colors) / sizeof(colors[0]))) {
+			c = 0;
+		}
+	}
+
+	FastLED.show();
+	delay(5);
+#endif
+
+
+
+#if 1
+	static int hilightPos = -hilight.size();
+	static uint8_t c = 0;
+	// static ColorRange const *colors[] = {&forest, &autumn, &ocean, &pink};
+	static ColorRange const *colors[] = {&purple, &ocean, &pink};
 
 	for (int i=0; i<NUM_LEDS; ++i) {
 		// ledState[i].advance();
@@ -143,21 +198,23 @@ void loop() {
 		leds[i] = colors[c]->percent(0);
 	}
 
-	for (int i=0; i<hilight.size_; ++i) {
+	for (int i=0; i<hilight.size(); ++i) {
 		int const pos = hilightPos + i;
-		if (pos >= 0  &&  pos < NUM_LEDS) {
-			leds[pos] = colors[c]->percent(hilight.diff_[i]);
+		if (pos >= 0) {
+			leds[pos % NUM_LEDS] = colors[c]->percent(hilight.percent(i));
 		}
 	}
-	if (++hilightPos == 40) {
-		hilightPos = -hilight.size_;
+	if (++hilightPos == NUM_LEDS) {
+		hilightPos = -hilight.size();
 		if (++c >= (uint8_t) (sizeof(colors) / sizeof(colors[0]))) {
 			c = 0;
 		}
 	}
 
 	FastLED.show();
-	delay(30);
+	delay(5);
+#endif
+
 
 #if 0
 	if ((int) (nextChange - millis()) <= 0) {
