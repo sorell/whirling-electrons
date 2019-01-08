@@ -1,8 +1,8 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 300
+#define NUM_LEDS 279
 #define DATA_PIN 9
-#define MAX_BRIGHT 130
+#define MAX_BRIGHT 200
 
 
 static CRGB leds[NUM_LEDS];
@@ -47,6 +47,12 @@ public:
 
 	CRGB percent(float const pc) const {
 		return {(uint8_t) (low_.red + (uint8_t) (redInc_ * pc)), (uint8_t) (low_.green + (uint8_t) (greenInc_ * pc)), (uint8_t) (low_.blue + (uint8_t) (blueInc_ * pc))};
+	}
+	CRGB const &high(void) const {
+		return high_;
+	}
+	CRGB const &low(void) const {
+		return low_;
 	}
 
 private:
@@ -193,22 +199,52 @@ void loop() {
 	static ColorRange const *colors[] = {&purple, &ocean, &pink};
 
 	for (int i=0; i<NUM_LEDS; ++i) {
-		// ledState[i].advance();
-		// ledState[i].copy(leds[i], *colors[c]);
-		leds[i] = colors[c]->percent(0);
+		leds[i] = colors[c]->low();
 	}
 
 	for (int i=0; i<hilight.size(); ++i) {
 		int const pos = hilightPos + i;
-		if (pos >= 0) {
-			leds[pos % NUM_LEDS] = colors[c]->percent(hilight.percent(i));
+		if (pos >= 0  &&  pos < NUM_LEDS) {
+			leds[pos] = colors[c]->percent(hilight.percent(i));
 		}
 	}
 	if (++hilightPos == NUM_LEDS) {
+		for(int i=0; i<100; ++i) {
+			CRGB const led(colors[c]->percent(i));
+			for(int pos=0; pos < NUM_LEDS; ++pos) {
+				leds[pos] = led;
+			}
+
+			FastLED.show();
+			delay(5);
+		}
+
+		ColorRange transform(colors[(c+1) % (sizeof(colors) / sizeof(colors[0]))]->high(), colors[c]->high());
+		for(int i=0; i<100; ++i) {
+			CRGB const led(transform.percent(i));
+			for(int pos=0; pos < NUM_LEDS; ++pos) {
+				leds[pos] = led;
+			}
+
+			FastLED.show();
+			delay(5);
+		}
+
 		hilightPos = -hilight.size();
 		if (++c >= (uint8_t) (sizeof(colors) / sizeof(colors[0]))) {
 			c = 0;
 		}
+
+		for(int i=100; i; --i) {
+			CRGB const led(colors[c]->percent(i));
+			for(int pos=0; pos < NUM_LEDS; ++pos) {
+				leds[pos] = led;
+			}
+
+			FastLED.show();
+			delay(5);
+		}
+
 	}
 
 	FastLED.show();
