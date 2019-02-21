@@ -11,6 +11,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1331.h>
 #include <SPI.h>
+#include "SoftTimer.h"
 
 
 // You can use any (4 or) 5 pins 
@@ -28,7 +29,8 @@
 #define	GREEN           0x07E0
 #define CYAN            0x07FF
 #define MAGENTA         0xF81F
-#define YELLOW          0xFFE0  
+#define YELLOW          0xFFE0
+#define ORANGE          0xFF70
 #define WHITE           0xFFFF
 
 // Option 1: use any pins but a little slower
@@ -38,80 +40,122 @@
 // (for UNO thats SCLK_PIN = 13 and sid = 11) and pin 10 must be 
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
-Adafruit_SSD1331 display = Adafruit_SSD1331(CS_PIN, DC_PIN, RST_PIN);
+static Adafruit_SSD1331 display = Adafruit_SSD1331(CS_PIN, DC_PIN, RST_PIN);
 
+static volatile uint8_t irqFired = 0;
+static uint8_t const ledPin = 13;
+static SoftTimer timer;
+static uint8_t const width = display.width();
+static uint8_t const height = display.height();
+static uint8_t const radius = (int) width * 5 / 8;
 
-volatile int irqFired = 0;
-int const ledPin = 13;
 
 void pin2Irq()
 {
-	digitalWrite(ledPin, HIGH);
+	static SoftTimer debounceTimer(100, SoftTimer::ONESHOT);
+
+	if (!debounceTimer.hasExpired()) {
+		return;
+	}
+	debounceTimer.reinit(SoftTimer::ONESHOT);
+
 	Serial.println("2");
+	if (!timer.shotsLeft()) {
+		timer.reinit(15);
+	}
+	else if (timer.shotsLeft() < 60 * 9) {
+		timer.addShots(15);
+	}
+	else {
+		timer.reinit(60 * 9);
+	}
+
+	irqFired = 1;
 }
 
 void pin3Irq()
 {
-	digitalWrite(ledPin, HIGH);
+	// digitalWrite(ledPin, HIGH);
 	Serial.println("3");
 }
 
-
 void setup() {
 	Serial.begin(115200);
-	Serial.print("hello!");
 	display.begin();
 
-	pinMode(ledPin, OUTPUT);
-	digitalWrite(ledPin, LOW);
+	timer.init(1000, SoftTimer::STOPPED);
+	timer.init(1000, 7);
+
+	Serial.println("Hello World! Tea timer (c) Sami Sorell.");
+	Serial.print("Display SSD1331 16-bit color OLED, resolution ");
+	Serial.print(width);
+	Serial.print("x");
+	Serial.println(height);
+
+	// pinMode(ledPin, OUTPUT);
+	// digitalWrite(ledPin, LOW);
 	pinMode(2, INPUT_PULLUP);
 	pinMode(3, INPUT_PULLUP);
 	attachInterrupt(digitalPinToInterrupt(2), pin2Irq, FALLING);
 	attachInterrupt(digitalPinToInterrupt(3), pin3Irq, FALLING);
+	irqFired = 0;
 }
 
-static int timeLeft = 75;
 
 void loop() {
-	display.fillScreen(BLACK);	
-	display.setTextSize(4);
-	display.setCursor(0, 20);
+	while (!timer.hasExpired()  &&  !irqFired);
+	irqFired = 0;
 
-	switch (timeLeft % 7) {
-	case 0: display.setTextColor(BLUE); break;
-	case 1: display.setTextColor(RED); break;
-	case 2: display.setTextColor(GREEN); break;
-	case 3: display.setTextColor(CYAN); break;
-	case 4: display.setTextColor(MAGENTA); break;
-	case 5: display.setTextColor(YELLOW); break;
-	case 6: display.setTextColor(WHITE); break;
-		
+	if (timer.shotsLeft() < 5) {
+		for (uint8_t i=0; i<radius; i+=5) {
+			display.fillCircle(width / 2, height / 2, i, RED);
+		}
 	}
 
-	int time = timeLeft;
-	int const minutes = time / 60;
-	time %= 60;
-	int const secondTens = time / 10;
-	time %= 10;
-	int const secondUnits = time;
+	display.fillScreen(BLACK);
 
-	display.print(minutes);
-	display.print(':');
-	display.print(secondTens);
-	display.print(secondUnits);
+	if (timer.shotsLeft() < 6) { 
+		display.setTextColor(RED); 
+	}
+	else if (timer.shotsLeft() < 16) { 
+		display.setTextColor(ORANGE); 
+	}
+	else { 
+		display.setTextColor(GREEN); 
+	}
 
-	delay(1000);
-	timeLeft--;
+	int time = timer.shotsLeft();
+	if (timer.shotsLeft() < 6) {
+	display.setTextSize(4);
+		display.setCursor(40, 20);
+		display.print(timer.shotsLeft());
+	}
+	else {
+		int const minutes = time / 60;
+		time %= 60;
+		int const secondTens = time / 10;
+		time %= 10;
+		int const secondUnits = time;
 
-	digitalWrite(ledPin, LOW);
-	// if (irqFired) {
-	// 	Serial.print("IRQ!");
-	// 	irqFired = 0;
-	// 	digitalWrite(ledPin, HIGH);
-	// 	delay(500);
-	// }
+		display.setTextSize(4);
+		display.setCursor(0, 20);
+		display.print(minutes);
+		display.print(':');
+		display.print(secondTens);
+		display.print(secondUnits);
+	}
 
-	if (timeLeft < 0) {
-		while (1);
+	if (timer.shotsLeft() == 0) {
+		for (uint8_t i=5; i; --i) {
+			delay(500);
+			display.fillScreen(BLACK);
+			delay(500);
+			display.setTextSize(4);
+			display.setCursor(0, 20);
+			display.setTextColor(RED);
+			display.print("0:00");
+		}
+		irqFired = 0;
+		timer.reinit(0);
 	}
 }
