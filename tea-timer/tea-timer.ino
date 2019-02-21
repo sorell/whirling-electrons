@@ -1,6 +1,6 @@
 // SSD1331 | ARDUINO NANO
 //     GDN | GDN
-//     VCC | 5V
+//     VCC | 3V3
 //     SCL | D13 (sclk)
 //     SDA | D11 (mosi)
 //     RES | D8
@@ -40,17 +40,39 @@
 // to use the microSD card (see the image drawing example)
 Adafruit_SSD1331 display = Adafruit_SSD1331(CS_PIN, DC_PIN, RST_PIN);
 
-void setup(void) {
-  Serial.begin(115200);
-  Serial.print("hello!");
-  display.begin();
+
+volatile int irqFired = 0;
+int const ledPin = 13;
+
+void pin2Irq()
+{
+	digitalWrite(ledPin, HIGH);
+	Serial.println("2");
+}
+
+void pin3Irq()
+{
+	digitalWrite(ledPin, HIGH);
+	Serial.println("3");
+}
+
+
+void setup() {
+	Serial.begin(115200);
+	Serial.print("hello!");
+	display.begin();
+
+	pinMode(ledPin, OUTPUT);
+	digitalWrite(ledPin, LOW);
+	pinMode(2, INPUT_PULLUP);
+	pinMode(3, INPUT_PULLUP);
+	attachInterrupt(digitalPinToInterrupt(2), pin2Irq, FALLING);
+	attachInterrupt(digitalPinToInterrupt(3), pin3Irq, FALLING);
 }
 
 static int timeLeft = 75;
 
 void loop() {
-	char textBuf[4];
-
 	display.fillScreen(BLACK);	
 	display.setTextSize(4);
 	display.setCursor(0, 20);
@@ -80,6 +102,14 @@ void loop() {
 
 	delay(1000);
 	timeLeft--;
+
+	digitalWrite(ledPin, LOW);
+	// if (irqFired) {
+	// 	Serial.print("IRQ!");
+	// 	irqFired = 0;
+	// 	digitalWrite(ledPin, HIGH);
+	// 	delay(500);
+	// }
 
 	if (timeLeft < 0) {
 		while (1);
