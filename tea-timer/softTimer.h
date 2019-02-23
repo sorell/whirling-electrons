@@ -1,6 +1,3 @@
-#ifndef _SS_SOFTTIMER_H
-#define _SS_SOFTTIMER_H
-
 class SoftTimer
 {
 public:
@@ -46,5 +43,3 @@ private:
     unsigned long _periodMs;
     unsigned long _nextTrigMs;
 };
-
-#endif  // #ifndef _SS_SOFTTIMER_H

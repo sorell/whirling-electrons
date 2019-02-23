@@ -1,3 +1,6 @@
+#ifndef _SS_SOFTTIMER_H
+#define _SS_SOFTTIMER_H
+
 class SoftTimer
 {
 public:
@@ -5,7 +8,7 @@ public:
     static unsigned int const STOPPED = 0;
     static unsigned int const ONESHOT = 1;
 
-    SoftTimer() {}
+    SoftTimer() : _shots(0) {}
     SoftTimer(unsigned long const periodMs, unsigned int const shots = INFINITE) { init(periodMs, shots); }
     ~SoftTimer() {}
     
@@ -36,10 +39,12 @@ public:
 
     int shotsLeft(void) const { return _shots; }
 
-    void addShots(unsigned int const shots) { _shots += shots; }
+    bool isRunning(void) const { return _shots != 0; }
 
 private:
     unsigned int _shots;
     unsigned long _periodMs;
     unsigned long _nextTrigMs;
 };
+
+#endif  // #ifndef _SS_SOFTTIMER_H
