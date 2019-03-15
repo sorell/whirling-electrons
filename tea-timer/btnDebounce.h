@@ -7,7 +7,7 @@ public:
     static uint8_t constexpr ALLOW_CONT = 0x2;
 
     BtnDebounce(uint8_t const pin, uint8_t const params, unsigned long const periodMs = 30)
-    : _pin(pin), _periodMs(periodMs), _btnParams(params), _btnState(WAITING)
+    : _btnState(WAITING), _pin(pin), _periodMs(periodMs), _btnParams(params)
     {
         if (periodMs > 255) {
             // Can't fit over 255 in uint8_t
@@ -56,10 +56,6 @@ protected:
         return _btnParams & 0x1;
     }
 
-    uint8_t const _pin;
-    uint8_t const _periodMs;
-    uint8_t const _btnParams;
-
 private:
     static uint8_t constexpr WAITING = 0;
     static uint8_t constexpr TRIGGERED = 1;
@@ -67,6 +63,11 @@ private:
 
     unsigned long _nextTrigMs;
     uint8_t _btnState;
+
+protected:
+    uint8_t const _pin;
+    uint8_t const _periodMs;
+    uint8_t const _btnParams;
 };
 
 #endif  // #ifndef _SS_BTNDEBOUNCE_H

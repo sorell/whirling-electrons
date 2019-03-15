@@ -1,6 +1,8 @@
 #ifndef _SS_LED_ITER_H
 #define _SS_LED_ITER_H
 
+
+
 // #include <FastLED.h>
 
 // #define NUM_LEDS 260
@@ -14,8 +16,10 @@ namespace LedUtils {
 template <typename T>
 class IteratorBase {
 public:
+	T &operator * () { return *p_; }
+	T *operator -> () { return p_; }
+	bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
 	bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
-	T *operator * () { return p_; }
 	// void at() const { fprintf(stderr, "iterator at %d\n", (int) (p_ - leds)); }
 protected:
 	IteratorBase(T *p) : p_(p) {}
@@ -44,6 +48,8 @@ class LedArrayReverse {};
 
 class LedArrayBase
 {
+public:
+	template <typename T> void forEach(T f) { for (CRGB *p = begin_; p != end_; ++p) { f(*p); } }
 protected:
 	LedArrayBase(CRGB *begin, CRGB *end) : begin_(begin), end_(end) {}
 
@@ -92,110 +98,23 @@ public:
 			values[i] = (uint8_t) (f * f * 255.0f);
 		}
 	}
-	uint8_t operator [] (unsigned int const idx) const {
-		if (idx > sizeof(values)/sizeof(values[0])) {
-			Serial.print("SquaredVal["); Serial.print(idx); Serial.println("] called\n");
-			while (1);
-		}
-		return values[idx];
-	}
+	// uint8_t operator [] (unsigned int const idx) const {
+	// 	if (idx > sizeof(values)/sizeof(values[0])) {
+	// 		Serial.print("SquaredVal["); Serial.print(idx); Serial.println("] called\n");
+	// 		while (1);
+	// 	}
+	// 	return values[idx];
+	// }
+	uint8_t operator [] (unsigned int const idx) const { return idx; }
 
 private:
 	uint8_t values[256];
 };
-
-
-
 
 
 }  // namespace LedUtils
 
-
 #if 0
-void doStuff()
-{
-	int deadman;
-	LedArray<> bottomRow1(leds, 0, 5);
-	LedArray<LedArrayReverse> topRow1(leds, 10, 5);
-
-	// LedSet firstRow(leds, 0, 120);
-
-	CRGB red(200, 0, 0);
-
-	fprintf(stderr, "Modify bottomRow1\n");
-	for (auto it = bottomRow1.begin(); it != bottomRow1.end(); ++it) {
-		it.at();
-		**it = red;
-		red.r++;
-	}
-	printLeds();
-
-	fprintf(stderr, "Modify bottomRow1 backwards\n");
-	deadman = 10;
-	for (auto it = bottomRow1.r_begin(); it != bottomRow1.r_end(); ++it) {
-		it.at();
-		**it = red;
-		red.r++;
-		if (--deadman == 0) return;
-	}
-	printLeds();
-
-	fprintf(stderr, "Modify topRow1\n");
-	deadman = 10;
-	for (auto it = topRow1.begin(); it != topRow1.end(); ++it) {
-		it.at();
-		**it = red;
-		red.r++;
-		if (--deadman == 0) return;
-	}
-	printLeds();
-
-	fprintf(stderr, "Modify topRow1 backwards\n");
-	deadman = 10;
-	for (auto it = topRow1.r_begin(); it != topRow1.r_end(); ++it) {
-		it.at();
-		**it = red;
-		red.r++;
-		if (--deadman == 0) return;
-	}
-	printLeds();
-}
-
-int main(void)
-{
-	for (int i=0; i<NUM_LEDS; ++i) {
-		leds[i].r = leds[i].g = leds[i].b = i + 100;
-	}
-	printLeds();
-	doStuff();
-	return 0;
-}
-
-
-
-
-
-
-class SquaredVal {
-public:
-	SquaredVal() {
-		for (uint32_t i=0; i<sizeof(values)/sizeof(values[0]); ++i) {
-			float f = (float) i / 255.0f;
-			values[i] = (uint8_t) (f * f * 255.0f);
-		}
-	}
-	uint8_t operator [] (unsigned int const idx) const {
-		if (idx > sizeof(values)/sizeof(values[0])) {
-			Serial.print("SquaredVal["); Serial.print(idx); Serial.println("] called\n");
-			while (1);
-		}
-		return values[idx];
-	}
-
-private:
-	uint8_t values[256];
-};
-
 
 static CRGB CrbgInit(uint8_t const r, uint8_t const g, uint8_t const b)
 {
