@@ -28,8 +28,8 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-static int const screenWidth = 96;
-static int const screenHeight = 64;
+// static int const screenWidth = 96;
+// static int const screenHeight = 64;
 
 
 static void toAscii(uint16_t const *const pictureData, int const w, int const h)
@@ -48,12 +48,15 @@ static void toAscii(uint16_t const *const pictureData, int const w, int const h)
 }
 
 
-static void toArduino1bit(uint16_t const *const pictureData, int const w, int const h)
+static void toArduino1bit(uint16_t const *const pictureData, int const w, int const h, char const *const filename)
 {
     uint16_t const *p = pictureData;
     printf("#include <stdint.h>\n");
-    printf("#include <avr/pgmspace.h>\n");
-    printf("static uint8_t const PROGMEM pictureData[] = {\n");
+    printf("#include <avr/pgmspace.h>\n\n");
+    printf("// 1-bit picture data extracted from file %s\n", filename);
+    printf("int constexpr pictureWidth = %d;\n", w);
+    printf("int constexpr pictureHeight = %d;\n", h);
+    printf("static uint8_t const PROGMEM picturebitData[] = {\n");
     for (int row=0; row<h; row++) {
         printf("    ");
         for (int col=0; col<w; col+=8) {
@@ -71,13 +74,16 @@ static void toArduino1bit(uint16_t const *const pictureData, int const w, int co
 }
 
 
-static void toArduinoPalette(uint16_t const *const pictureData, int const w, int const h, int const paletteBits)
+static void toArduinoPalette(uint16_t const *const pictureData, int const w, int const h, int const paletteBits, char const *const filename)
 {
     uint16_t const *p = pictureData;
     bool issuePaletteWarning = false;
 
     printf("#include <stdint.h>\n");
-    printf("#include <avr/pgmspace.h>\n");
+    printf("#include <avr/pgmspace.h>\n\n");
+    printf("// %d-bit picture data extracted from file %s\n", paletteBits, filename);
+    printf("int constexpr pictureWidth = %d;\n", w);
+    printf("int constexpr pictureHeight = %d;\n", h);
     printf("static uint8_t const PROGMEM pictureData[] = {\n");
 
     int const paletteSize = paletteBits * paletteBits;
@@ -88,11 +94,11 @@ static void toArduinoPalette(uint16_t const *const pictureData, int const w, int
         palette[pIdx] = -1;
     }
 
-    for (int row=0; row<h; row++) {
+    for (int row=h; row>0; --row) {
         printf("    ");
-        for (int col=0; col<w; col+=colorsPerWord) {
+        for (int col=w; col>0; col-=colorsPerWord) {
             uint8_t data = 0;
-            for (int word=0; word<colorsPerWord; ++word) {
+            for (int word=0; word<(col>colorsPerWord?colorsPerWord:col); ++word) {
                 int colorIdx = -1;
                 int availIdx = -1;
                 for (int pIdx=0; pIdx<paletteSize; ++pIdx) {
@@ -112,7 +118,7 @@ static void toArduinoPalette(uint16_t const *const pictureData, int const w, int
                 }
                 if (colorIdx < 0) {
                     issuePaletteWarning = true;  // There wasn't space in the palette for the color
-                    fprintf(stderr, "First overflow color: 0x%04x\n", *p);
+                    // fprintf(stderr, "Can't fit color: 0x%02x%02x%02x\n", *p >> 11, (*p >> 5) & 0x3f, *p & 0x1f);
                 }
                 else {
                     data |= colorIdx << (word * paletteBits);
@@ -124,7 +130,6 @@ static void toArduinoPalette(uint16_t const *const pictureData, int const w, int
         printf("\n");
     }
     printf("};\n\nstatic uint16_t const picturePalette[%d] = {", paletteSize);
-
     for (int pIdx=0; pIdx<paletteSize; ++pIdx) {
         if (pIdx) {
             printf(", ");
@@ -134,17 +139,20 @@ static void toArduinoPalette(uint16_t const *const pictureData, int const w, int
     printf("};\n");
 
     if (issuePaletteWarning) {
-        fprintf(stderr, "Warning: all found colors could not fit in the palette\n");
+        fprintf(stderr, "WARNING: all found colors could not fit in the palette\n");
     }
 
     free(palette);
 }
 
-static void toArduino16bit(uint16_t const *const pictureData, int const w, int const h)
+static void toArduino16bit(uint16_t const *const pictureData, int const w, int const h, char const *const filename)
 {
     uint16_t const *p = pictureData;
     printf("#include <stdint.h>\n");
-    printf("#include <avr/pgmspace.h>\n");
+    printf("#include <avr/pgmspace.h>\n\n");
+    printf("// 16-bit picture data extracted from file %s\n", filename);
+    printf("int constexpr pictureWidth = %d;\n", w);
+    printf("int constexpr pictureHeight = %d;\n", h);
     printf("static uint16_t const PROGMEM pictureData[] = {\n");
     for (int row=0; row<h; row++) {
         printf("    ");
@@ -188,11 +196,6 @@ static uint16_t readPixel(FILE *f)
     uint32_t g = (result >> 8) & 0xFF;
     uint32_t r = (result >> 16) & 0xFF;
     uint16_t res = ((b >> 3) & 0x001F) | ((g << 3) & 0x07E0) | ((r << 8) & 0xF800);
-    fprintf(stderr, "rgb = %d %d %d, col = %04x\n", r, g, b, res);
-// static int die = 0;
-// if (res != 0  &&  res != 0xffff)
-// die = 1;
-// if (res == 0 && die) exit(1);
     return res;
 }
 
@@ -222,13 +225,9 @@ static void bmpDraw(char const *const filename, char const *const convert)
     fprintf(stderr, "Image Offset: %d\n", bmpImageoffset);
     // Read DIB header
     fprintf(stderr, "Header size: %d\n", read32(bmpFile));
-    int const w = read32(bmpFile);
+    int w = read32(bmpFile);
     int h = read32(bmpFile);
     fprintf(stderr, "Image geometry: %dx%d\n", w, h);
-    if (w != screenWidth  ||  h != screenHeight) {
-        fprintf(stderr, "The image size needs to be %dx%d\n", screenWidth, screenHeight);
-        exit(1);
-    }
     int const bmpPlanes = read16(bmpFile);
     if(bmpPlanes != 1) { // # planes -- must be '1'
         fprintf(stderr, "BMP planes %d. Can't continue\n", bmpPlanes);
@@ -244,8 +243,6 @@ static void bmpDraw(char const *const filename, char const *const convert)
         exit(1);
     }
 
-    fprintf(stderr, "Image size: %dx%d\n", w, h);
-
     // If bmpHeight is negative, image is in top-down order.
     // This is not canon but has been observed in the wild.
     bool flip = true;
@@ -260,28 +257,36 @@ static void bmpDraw(char const *const filename, char const *const convert)
     fprintf(stderr, "Reading %d rows with %d columns\n", h, w);
     fseek(bmpFile, bmpImageoffset, SEEK_SET);
 
-    for (int row=0; row<h; row++) { // For each scanline...
+    unsigned int const zeroFillBytes = 4 - (w * 3 % 4);  // Rows are aligned to 4 bytes
+    char extra[3];
+    for (int row=0; row<h; row++) {
         if (flip) {
             p = pictureData + (h - row - 1) * w;
         }
 
-        for (int col=0; col<w; col++) { // For each pixel...
+        for (int col=0; col<w; col++) {
             *p++ = readPixel(bmpFile);
         }
+
+        if (fread(extra, 1, zeroFillBytes, bmpFile) != zeroFillBytes) {
+            fprintf(stderr, "Read error: %s\n", strerror(errno));
+            exit(1);
+        }
     }
-    fprintf(stderr, "Loaded\n");
+
+    fprintf(stderr, "Loaded %s\n", filename);
 
     if (!strcmp(convert, "arduino1bit")) {
-        toArduino1bit(pictureData, w, h);
+        toArduino1bit(pictureData, w, h, filename);
     }
     else if (!strcmp(convert, "arduino2bit")) {
-        toArduinoPalette(pictureData, w, h, 2);
+        toArduinoPalette(pictureData, w, h, 2, filename);
     }
     else if (!strcmp(convert, "arduino4bit")) {
-        toArduinoPalette(pictureData, w, h, 4);
+        toArduinoPalette(pictureData, w, h, 4, filename);
     }
     else if (!strcmp(convert, "arduino16bit")) {
-        toArduino16bit(pictureData, w, h);
+        toArduino16bit(pictureData, w, h, filename);
     }
     else if (!strcmp(convert, "ascii")) {
         toAscii(pictureData, w, h);
