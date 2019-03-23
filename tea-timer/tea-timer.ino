@@ -337,11 +337,16 @@ void setup() {
 
 	Serial.print("Pixels in display: ");
 	Serial.println(width * height);
-	Serial.print("Bytes of data    : ");
-	Serial.println(sizeof(pictureData));
 
 	pinMode(BUZZER_PIN, OUTPUT);
 
+	int tones[6] = {262, 294, 330, 349, 440, 494};
+	for (int i=0; i<6; ++i) {
+		tone(BUZZER_PIN, tones[i]);
+		delay(500);
+	}
+	noTone(BUZZER_PIN);
+	while (1);
 	// tone(BUZZER_PIN, 4000);
 
 	// while (1) {
