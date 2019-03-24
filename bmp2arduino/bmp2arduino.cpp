@@ -257,7 +257,7 @@ static void bmpDraw(char const *const filename, char const *const convert)
     fprintf(stderr, "Reading %d rows with %d columns\n", h, w);
     fseek(bmpFile, bmpImageoffset, SEEK_SET);
 
-    unsigned int const zeroFillBytes = 4 - (w * 3 % 4);  // Rows are aligned to 4 bytes
+    unsigned int const zeroFillBytes = (4 - (w * 3 % 4)) & 3;  // Rows are aligned to 4 bytes
     char extra[3];
     for (int row=0; row<h; row++) {
         if (flip) {
