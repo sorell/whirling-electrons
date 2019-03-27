@@ -487,7 +487,7 @@ static uint16_t const steamPicPalette[4] = {0x0000, 0xffff, 0x8430, 0xffff};
 
 
 // ****************************************************************************
-// *** Images created with bmp2arduino (in the same repo)                   ***
+// *** Higher level code                                                    ***
 // ****************************************************************************
 
 static SoftTimer clockTimer(1000, SoftTimer::STOPPED);
@@ -498,9 +498,15 @@ static BtnDebounce dnBtn(BTNDN_PIN, LOW, 20);
 bool checkButtons(void)
 {
 	if (upBtn.isPressed()) {
-		int const toMax = 60 * 9 - clockTimer.shotsLeft();
-		int const addMax15 = toMax > 15 ? 15 : toMax;
-		clockTimer.reinit(clockTimer.shotsLeft() + addMax15);
+		if (clockTimer.shotsLeft() == 0) {
+			clockTimer.reinit(2 * 60 + 30);
+		}
+		else if (clockTimer.shotsLeft() > 9 * 60 + 45) {
+			clockTimer.reinit(9 * 60 + 59);
+		}
+		else {
+			clockTimer.reinit(clockTimer.shotsLeft() + 15);
+		}
 		return true;
 	}
 	if (dnBtn.isPressed()) {
