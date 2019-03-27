@@ -28,7 +28,7 @@
 
 
 // ****************************************************************************
-// *** Stuff for music                                                      ***
+// *** Songs                                                                ***
 // ****************************************************************************
 
 struct Note {
@@ -41,21 +41,27 @@ struct SongPart {
 	uint8_t size;
 };
 
+struct Song {
+	SongPart const *parts;
+	uint8_t size;
+};
+
+// Game of Thrones theme from https://flat.io/score/597a6d912c9b0e5c57a1b244-game-of-thrones-main-theme
 Note constexpr vader1[] = {
 	{A4, 500}, {A4, 500}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}, 
 	{E5, 500}, {E5, 500}, {E5, 500}, {F5, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}
 };
 Note constexpr vader2[] = {
-	{A5, 500}, {A4, 300}, {A4, 150}, {A5, 500}, {GS5, 325}, {G5, 175}, {FS5, 125}, {F5, 125}, {FS5, 250}, {0, 325},
-	{AS4, 250}, {DS5, 500}, {D5, 325}, {CS5, 175}, {C5, 125}, {B4, 125}, {C5, 250}, {0, 350}
+	{A5, 500}, {A4, 300}, {A4, 150}, {A5, 500}, {Gs5, 325}, {G5, 175}, {Fs5, 125}, {F5, 125}, {Fs5, 250}, {0, 325},
+	{As4, 250}, {Ds5, 500}, {D5, 325}, {Cs5, 175}, {C5, 125}, {B4, 125}, {C5, 250}, {0, 350}
 };
 Note constexpr vader3[] = {
-	{F4, 250}, {GS4, 500}, {F4, 350}, {A4, 125}, {C5, 500}, {A4, 375}, {C5, 125}, {E5, 650}, {0, 500}
+	{F4, 250}, {Gs4, 500}, {F4, 350}, {A4, 125}, {C5, 500}, {A4, 375}, {C5, 125}, {E5, 650}, {0, 500}
 };
 Note constexpr vader4[] = {
-	{F4, 250}, {GS4, 500}, {F4, 350}, {C5, 125}, {A4, 500}, {F4, 375}, {C5, 125}, {A4, 650}
+	{F4, 250}, {Gs4, 500}, {F4, 350}, {C5, 125}, {A4, 500}, {F4, 375}, {C5, 125}, {A4, 650}
 };
-SongPart constexpr song[] = {
+SongPart constexpr vaderSong[] = {
 	{vader1, sizeof(vader1)/sizeof(vader1[0])}, 
 	{vader2, sizeof(vader2)/sizeof(vader2[0])}, 
 	{vader3, sizeof(vader3)/sizeof(vader3[0])}, 
@@ -64,11 +70,181 @@ SongPart constexpr song[] = {
 };
 
 
+// Game of Thrones theme from https://flat.io/score/597a6d912c9b0e5c57a1b244-game-of-thrones-main-theme
+int constexpr gotTempo = TEMPO(80);
+
+Note constexpr got2[] = {
+	// Part 2, repeated 4x
+	{G4, NL_8(gotTempo)}, {C4, NL_8(gotTempo)}, {E4, NL_16(gotTempo)}, {F4, NL_16(gotTempo)}
+};
+Note constexpr got3_7[] = {
+    // Parts 3 and 7
+	{G3, NL_4dot(gotTempo)}, {C3, NL_4dot(gotTempo)}, {E3, NL_16(gotTempo)}, {F3, NL_16(gotTempo)}, {G3, NL_4dot(gotTempo)}, {C3, NL_4(gotTempo)}, {E3, NL_16(gotTempo)}, {F3, NL_16(gotTempo)}
+};
+Note constexpr got4[] = {
+	// Part 4
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)},
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)},
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)},	{B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
+	{C4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_8(gotTempo)}
+};
+Note constexpr got5_9[] = {
+	// Parts 5 and 9
+	{F3, NL_4dot(gotTempo)}, {B2, NL_4dot(gotTempo)}, {E3, NL_16(gotTempo)}, {D3, NL_16(gotTempo)}, {F3, NL_4dot(gotTempo)}, {B2, NL_4dot(gotTempo)}
+};
+Note constexpr got6[] = {
+	// Part 6
+	{E3, NL_16(gotTempo)}, {D3, NL_16(gotTempo)}, {C3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)}, 
+	{C4, NL_8(gotTempo)}, {F3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_8(gotTempo)}, {F3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)},
+	{C4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {A3, NL_8(gotTempo)}
+};
+Note constexpr got8[] = {
+	// Part 8
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
+	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_8(gotTempo)}
+};
+
+SongPart constexpr gotSong[] = {
+	{got2, sizeof(got2)/sizeof(got2[0])}, {got2, sizeof(got2)/sizeof(got2[0])},	{got2, sizeof(got2)/sizeof(got2[0])},
+	{got2, sizeof(got2)/sizeof(got2[0])}, {got3_7, sizeof(got3_7)/sizeof(got3_7[0])},
+	{got4, sizeof(got4)/sizeof(got4[0])},	{got5_9, sizeof(got5_9)/sizeof(got5_9[0])},
+	{got6, sizeof(got6)/sizeof(got6[0])},	{got3_7, sizeof(got3_7)/sizeof(got3_7[0])},
+	{got8, sizeof(got8)/sizeof(got8[0])},	{got5_9, sizeof(got5_9)/sizeof(got5_9[0])}
+};
+
+
+// Amelie's Waltz from https://flat.io/score/5ae0d2898345a64c7afc4570-amelies-waltz
+int constexpr amelieTempo1 = TEMPO(96);
+int constexpr amelieTempo2 = TEMPO(180);
+
+Note constexpr amelie1_14[] = {
+	// Part 1
+	{D5, NL_2(amelieTempo1)}, {D5, NL_8dot(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, 
+	{B4, NL_2dot(amelieTempo1)}, {A4, NL_4(amelieTempo1)}, 
+	{D5, NL_2(amelieTempo1)}, {D5, NL_8(amelieTempo1)}, {E5, NL_8(amelieTempo1)}, {D5, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, 
+	{B4, NL_2dot(amelieTempo1)}, {A4, NL_4(amelieTempo1)}, 
+	{C5, NL_2dot(amelieTempo1)}, {C5, NL_8dot(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, 
+	{E4, NLx1(amelieTempo1)}, 
+
+	// Part 7
+	{C5, NL_2(amelieTempo1)}, {C5, NL_8(amelieTempo1)}, {D5, NL_8(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, 
+	{E4, NLx1(amelieTempo1)}, 
+	// Part 9
+	{D5, NL_2dot(amelieTempo1)}, {D5, NL_8(amelieTempo1)}, {C5, NL_8(amelieTempo1)}, 
+	{B4, NL_2dot(amelieTempo1)}, {A4, NL_2(amelieTempo1)},
+	// Part 11
+	{D5, NL_2(amelieTempo1)}, {D5, NL_8(amelieTempo1)}, {C5, NL_8(amelieTempo1)}, {D5, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, 
+	{B4, NL_2dot(amelieTempo1)}, {A4, NL_4(amelieTempo1)}, 
+	{C5, NL_2dot(amelieTempo1)}, {C5, NL_8(amelieTempo1)}, {B4, NL_8(amelieTempo1)}, 
+	// Part 14
+	{A4, NLx1(amelieTempo1)}, 
+	{C5, NL_2(amelieTempo1)}, {C5, NL_8(amelieTempo1)}, {D5, NL_8(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, {B4, NL_16(amelieTempo1)}, 
+	{A4, NLx1(amelieTempo1)}
+};
+// Tempo to 180
+Note constexpr amelie17_19n21_23[] = {
+	// Part 17-19, 21-23
+	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, 
+	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, 
+	{B4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie20[] = {
+	// Part 20
+	{A4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie24n36n40[] = {
+	// Parts 24, 36, 40.. ad nauseaum
+	{A4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie25n26n29_30n39n41n45[] = {
+	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie27n31n35n39[] = {
+	{B4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie28n32n44n48[] = {
+	{E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie33[] = {
+	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie34n38[] = {
+	{E5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie42[] = {
+	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie43n47[] = {
+	{G4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie46[] = {
+	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {B4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
+};
+Note constexpr amelie49[] = {
+	{D5, NL_2dot(amelieTempo2)}
+};
+
+SongPart constexpr amelieSong[] = {
+	{amelie1_14, sizeof(amelie1_14)/sizeof(amelie1_14[0])},
+	{amelie17_19n21_23, sizeof(amelie17_19n21_23)/sizeof(amelie17_19n21_23[0])},
+	{amelie20, sizeof(amelie20)/sizeof(amelie20[0])},
+	{amelie17_19n21_23, sizeof(amelie17_19n21_23)/sizeof(amelie17_19n21_23[0])},
+	{amelie24n36n40, sizeof(amelie24n36n40)/sizeof(amelie24n36n40[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie27n31n35n39, sizeof(amelie27n31n35n39)/sizeof(amelie27n31n35n39[0])},
+	{amelie28n32n44n48, sizeof(amelie28n32n44n48)/sizeof(amelie28n32n44n48[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie27n31n35n39, sizeof(amelie27n31n35n39)/sizeof(amelie27n31n35n39[0])},
+	{amelie28n32n44n48, sizeof(amelie28n32n44n48)/sizeof(amelie28n32n44n48[0])},
+	{amelie33, sizeof(amelie33)/sizeof(amelie33[0])},
+	{amelie34n38, sizeof(amelie34n38)/sizeof(amelie34n38[0])},
+	{amelie27n31n35n39, sizeof(amelie27n31n35n39)/sizeof(amelie27n31n35n39[0])},
+	{amelie24n36n40, sizeof(amelie24n36n40)/sizeof(amelie24n36n40[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie34n38, sizeof(amelie34n38)/sizeof(amelie34n38[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie24n36n40, sizeof(amelie24n36n40)/sizeof(amelie24n36n40[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie42, sizeof(amelie42)/sizeof(amelie42[0])},
+	{amelie43n47, sizeof(amelie43n47)/sizeof(amelie43n47[0])},
+	{amelie28n32n44n48, sizeof(amelie28n32n44n48)/sizeof(amelie28n32n44n48[0])},
+	{amelie25n26n29_30n39n41n45, sizeof(amelie25n26n29_30n39n41n45)/sizeof(amelie25n26n29_30n39n41n45[0])},
+	{amelie46, sizeof(amelie46)/sizeof(amelie46[0])},
+	{amelie43n47, sizeof(amelie43n47)/sizeof(amelie43n47[0])},
+	{amelie28n32n44n48, sizeof(amelie28n32n44n48)/sizeof(amelie28n32n44n48[0])},
+	{amelie49, sizeof(amelie49)/sizeof(amelie49[0])}
+};
+
+
+Song constexpr allSongs[] = {
+	{vaderSong, sizeof(vaderSong)/sizeof(vaderSong[0])},
+	{gotSong, sizeof(gotSong)/sizeof(gotSong[0])},
+	{amelieSong, sizeof(amelieSong)/sizeof(amelieSong[0])}
+};
+
+
+// ****************************************************************************
+// *** Stuff for music                                                      ***
+// ****************************************************************************
+
 void playNotes(Note const *const notes, int const size)
 {
 	for (Note const *note=notes; note<notes+size; ++note) {
 		tone(BUZZER_PIN, note->f, note->t);
 		delay(note->t + 10);
+	}
+}
+
+
+void playSong(SongPart const *songParts, int parts)
+{
+	while (parts) {
+		playNotes(songParts->notes, songParts->size);
+		--parts;
+		++songParts;
 	}
 }
 
@@ -176,7 +352,7 @@ void draw4bitData(uint8_t const *data, uint16_t const *palette, int const w, int
 {
 	for (int row=h; row; --row) {
 		for (int col=w; col>0; col-=2) {
-			uint8_t byte = pgm_read_byte_near(data);
+			uint8_t const byte = pgm_read_byte_near(data);
 			display.writeColor(palette[byte & 0xF], 1);
 			if (col > 1) {
 				display.writeColor(palette[byte >> 4], 1);
@@ -427,6 +603,49 @@ static uint8_t const PROGMEM motdData[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x88, 0x01, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0x00, 0x00, 
 };
+
+
+// 4-bit picture data extracted from file arrow.bmp
+int constexpr arrowPicWidth = 24;
+int constexpr arrowPicHeight = 34;
+static uint8_t const PROGMEM arrowPicData[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x21, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x10, 0x32, 0x13, 0x02, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x21, 0x43, 0x34, 0x21, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x10, 0x32, 0x43, 0x44, 0x13, 0x02, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x21, 0x53, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x10, 0x32, 0x55, 0x43, 0x44, 0x44, 0x13, 0x02, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x55, 0x33, 0x44, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x10, 0x32, 0x55, 0x55, 0x35, 0x44, 0x44, 0x44, 0x13, 0x02, 0x00, 
+    0x00, 0x21, 0x53, 0x55, 0x55, 0x35, 0x43, 0x44, 0x44, 0x34, 0x21, 0x00, 
+    0x10, 0x32, 0x55, 0x56, 0x55, 0x35, 0x43, 0x44, 0x44, 0x44, 0x13, 0x02, 
+    0x21, 0x53, 0x55, 0x65, 0x55, 0x35, 0x43, 0x44, 0x44, 0x44, 0x34, 0x21, 
+    0x21, 0x33, 0x33, 0x63, 0x55, 0x55, 0x43, 0x44, 0x34, 0x33, 0x33, 0x21, 
+    0x10, 0x11, 0x21, 0x63, 0x56, 0x55, 0x43, 0x44, 0x34, 0x11, 0x11, 0x02, 
+    0x00, 0x00, 0x21, 0x63, 0x56, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x63, 0x56, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x63, 0x56, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x56, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x63, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x66, 0x55, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x55, 0x35, 0x43, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x55, 0x35, 0x44, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x53, 0x55, 0x35, 0x44, 0x44, 0x34, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x21, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x21, 0x00, 0x00, 
+    0x00, 0x00, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x21, 0x00, 0x00, 
+};
+
+static uint16_t const arrowPicPalette[16] = {0x0000, 0xffff, 0xd6ba, 0x233d, 0x001f, 0x543e, 0x74ff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff};
 
 
 // 2-bit picture data extracted from file teacup.bmp
@@ -714,7 +933,6 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 	display.fillScreen(BLACK);
 }
 
-
 void setup() {
 	Serial.begin(115200);
 	display.begin();
@@ -732,6 +950,11 @@ void setup() {
 
 	pinMode(BUZZER_PIN, OUTPUT);
 
+	// display.setAddrWindow(0, 0, arrowPicWidth, arrowPicHeight);
+	// display.startWrite();
+	// draw4bitData(arrowPicData, arrowPicPalette, arrowPicWidth, arrowPicHeight);
+	// display.endWrite();
+	// while (1);
 	animateMotd();
 }
 
@@ -749,7 +972,8 @@ void loop() {
 	// Tea is served!
 	if (clockTimer.shotsLeft() == 0) {
 		clockTimer.reinit(0);
-		teacupAnimationWithSong(song, sizeof(song)/sizeof(song[0]));
+		int const songNum = random(sizeof(allSongs)/sizeof(allSongs[0]));
+		teacupAnimationWithSong(allSongs[songNum].parts, allSongs[songNum].size);
 
 		// If clockTimer was changed by up button during teacupAnimation()
 		// if (clockTimer.shotsLeft() > 0) {
