@@ -47,18 +47,18 @@ struct Song {
 };
 
 // Game of Thrones theme from https://flat.io/score/597a6d912c9b0e5c57a1b244-game-of-thrones-main-theme
-Note constexpr vader1[] = {
+Note constexpr PROGMEM vader1[] = {
 	{A4, 500}, {A4, 500}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}, 
 	{E5, 500}, {E5, 500}, {E5, 500}, {F5, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}
 };
-Note constexpr vader2[] = {
+Note constexpr PROGMEM vader2[] = {
 	{A5, 500}, {A4, 300}, {A4, 150}, {A5, 500}, {Gs5, 325}, {G5, 175}, {Fs5, 125}, {F5, 125}, {Fs5, 250}, {0, 325},
 	{As4, 250}, {Ds5, 500}, {D5, 325}, {Cs5, 175}, {C5, 125}, {B4, 125}, {C5, 250}, {0, 350}
 };
-Note constexpr vader3[] = {
+Note constexpr PROGMEM vader3[] = {
 	{F4, 250}, {Gs4, 500}, {F4, 350}, {A4, 125}, {C5, 500}, {A4, 375}, {C5, 125}, {E5, 650}, {0, 500}
 };
-Note constexpr vader4[] = {
+Note constexpr PROGMEM vader4[] = {
 	{F4, 250}, {Gs4, 500}, {F4, 350}, {C5, 125}, {A4, 500}, {F4, 375}, {C5, 125}, {A4, 650}
 };
 SongPart constexpr vaderSong[] = {
@@ -73,32 +73,32 @@ SongPart constexpr vaderSong[] = {
 // Game of Thrones theme from https://flat.io/score/597a6d912c9b0e5c57a1b244-game-of-thrones-main-theme
 int constexpr gotTempo = TEMPO(80);
 
-Note constexpr got2[] = {
+Note constexpr PROGMEM got2[] = {
 	// Part 2, repeated 4x
 	{G4, NL_8(gotTempo)}, {C4, NL_8(gotTempo)}, {E4, NL_16(gotTempo)}, {F4, NL_16(gotTempo)}
 };
-Note constexpr got3_7[] = {
+Note constexpr PROGMEM got3_7[] = {
     // Parts 3 and 7
 	{G3, NL_4dot(gotTempo)}, {C3, NL_4dot(gotTempo)}, {E3, NL_16(gotTempo)}, {F3, NL_16(gotTempo)}, {G3, NL_4dot(gotTempo)}, {C3, NL_4(gotTempo)}, {E3, NL_16(gotTempo)}, {F3, NL_16(gotTempo)}
 };
-Note constexpr got4[] = {
+Note constexpr PROGMEM got4[] = {
 	// Part 4
 	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)},
 	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)},
 	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)},	{B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
 	{C4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_8(gotTempo)}
 };
-Note constexpr got5_9[] = {
+Note constexpr PROGMEM got5_9[] = {
 	// Parts 5 and 9
 	{F3, NL_4dot(gotTempo)}, {B2, NL_4dot(gotTempo)}, {E3, NL_16(gotTempo)}, {D3, NL_16(gotTempo)}, {F3, NL_4dot(gotTempo)}, {B2, NL_4dot(gotTempo)}
 };
-Note constexpr got6[] = {
+Note constexpr PROGMEM got6[] = {
 	// Part 6
 	{E3, NL_16(gotTempo)}, {D3, NL_16(gotTempo)}, {C3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)}, 
 	{C4, NL_8(gotTempo)}, {F3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_8(gotTempo)}, {F3, NL_8(gotTempo)}, {A3, NL_16(gotTempo)}, {B3, NL_16(gotTempo)},
 	{C4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {A3, NL_8(gotTempo)}
 };
-Note constexpr got8[] = {
+Note constexpr PROGMEM got8[] = {
 	// Part 8
 	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
 	{D4, NL_8(gotTempo)}, {G3, NL_8(gotTempo)}, {B3, NL_16(gotTempo)}, {C4, NL_16(gotTempo)}, 
@@ -109,9 +109,9 @@ Note constexpr got8[] = {
 SongPart constexpr gotSong[] = {
 	{got2, sizeof(got2)/sizeof(got2[0])}, {got2, sizeof(got2)/sizeof(got2[0])},	{got2, sizeof(got2)/sizeof(got2[0])},
 	{got2, sizeof(got2)/sizeof(got2[0])}, {got3_7, sizeof(got3_7)/sizeof(got3_7[0])},
-	{got4, sizeof(got4)/sizeof(got4[0])},	{got5_9, sizeof(got5_9)/sizeof(got5_9[0])},
-	{got6, sizeof(got6)/sizeof(got6[0])},	{got3_7, sizeof(got3_7)/sizeof(got3_7[0])},
-	{got8, sizeof(got8)/sizeof(got8[0])},	{got5_9, sizeof(got5_9)/sizeof(got5_9[0])}
+	{got4, sizeof(got4)/sizeof(got4[0])}, {got5_9, sizeof(got5_9)/sizeof(got5_9[0])},
+	{got6, sizeof(got6)/sizeof(got6[0])}, {got3_7, sizeof(got3_7)/sizeof(got3_7[0])},
+	{got8, sizeof(got8)/sizeof(got8[0])}, {got5_9, sizeof(got5_9)/sizeof(got5_9[0])}
 };
 
 
@@ -119,7 +119,7 @@ SongPart constexpr gotSong[] = {
 int constexpr amelieTempo1 = TEMPO(96);
 int constexpr amelieTempo2 = TEMPO(180);
 
-Note constexpr amelie1_14[] = {
+Note constexpr PROGMEM amelie1_14[] = {
 	// Part 1
 	{D5, NL_2(amelieTempo1)}, {D5, NL_8dot(amelieTempo1)}, {C5, NL_16(amelieTempo1)}, 
 	{B4, NL_2dot(amelieTempo1)}, {A4, NL_4(amelieTempo1)}, 
@@ -144,45 +144,45 @@ Note constexpr amelie1_14[] = {
 	{A4, NLx1(amelieTempo1)}
 };
 // Tempo to 180
-Note constexpr amelie17_19n21_23[] = {
+Note constexpr PROGMEM amelie17_19n21_23[] = {
 	// Part 17-19, 21-23
 	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, 
 	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, 
 	{B4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie20[] = {
+Note constexpr PROGMEM amelie20[] = {
 	// Part 20
 	{A4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie24n36n40[] = {
+Note constexpr PROGMEM amelie24n36n40[] = {
 	// Parts 24, 36, 40.. ad nauseaum
 	{A4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie25n26n29_30n39n41n45[] = {
+Note constexpr PROGMEM amelie25n26n29_30n39n41n45[] = {
 	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie27n31n35n39[] = {
+Note constexpr PROGMEM amelie27n31n35n39[] = {
 	{B4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie28n32n44n48[] = {
+Note constexpr PROGMEM amelie28n32n44n48[] = {
 	{E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {C4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie33[] = {
+Note constexpr PROGMEM amelie33[] = {
 	{D5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie34n38[] = {
+Note constexpr PROGMEM amelie34n38[] = {
 	{E5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie42[] = {
+Note constexpr PROGMEM amelie42[] = {
 	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie43n47[] = {
+Note constexpr PROGMEM amelie43n47[] = {
 	{G4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {D4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie46[] = {
+Note constexpr PROGMEM amelie46[] = {
 	{C5, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}, {B4, NL_8(amelieTempo2)}, {E4, NL_8(amelieTempo2)}, {F4, NL_8(amelieTempo2)}
 };
-Note constexpr amelie49[] = {
+Note constexpr PROGMEM amelie49[] = {
 	{D5, NL_2dot(amelieTempo2)}
 };
 
@@ -233,8 +233,10 @@ Song constexpr allSongs[] = {
 void playNotes(Note const *const notes, int const size)
 {
 	for (Note const *note=notes; note<notes+size; ++note) {
-		tone(BUZZER_PIN, note->f, note->t);
-		delay(note->t + 10);
+		int const freq = pgm_read_word(&note->f);
+		int const time = pgm_read_word(&note->t);
+		tone(BUZZER_PIN, freq, time);
+		delay(time + 10);
 	}
 }
 
@@ -251,8 +253,8 @@ void playSong(SongPart const *songParts, int parts)
 
 void playNextNote(SongPart const *const songParts, int const parts, SongPart const **const pSongPart, Note const **const pNote, SoftTimer *const timer)
 {
-	int const freq = (*pNote)->f;
-	int const time = (*pNote)->t;
+	int const freq = pgm_read_word(&((*pNote)->f));
+	int const time = pgm_read_word(&((*pNote)->t));
 	tone(BUZZER_PIN, freq, time);
 
 	SongPart const *part = *pSongPart;
@@ -313,7 +315,7 @@ void draw1bitData(uint8_t const *data, uint16_t const color, int const w, int co
 	int const loops = w * h / 8;
 
 	for(int i=loops; i; --i) {
-		uint8_t byte = pgm_read_byte_near(data);
+		uint8_t byte = pgm_read_byte(data);
 		for (int bit=8; bit; --bit) {
 			display.writeColor((byte & 1) ? color : BLACK, 1);
 			byte >>= 1;
@@ -327,7 +329,7 @@ void draw2bitData(uint8_t const *data, uint16_t const *palette, int const w, int
 {
 	for (int row=h; row; --row) {
 		for (int col=w; col>0; col-=4) {
-			uint8_t byte = pgm_read_byte_near(data);
+			uint8_t byte = pgm_read_byte(data);
 			switch(col) {
 			default:
 				display.writeColor(palette[byte & 0x3], 1);
@@ -352,7 +354,7 @@ void draw4bitData(uint8_t const *data, uint16_t const *palette, int const w, int
 {
 	for (int row=h; row; --row) {
 		for (int col=w; col>0; col-=2) {
-			uint8_t const byte = pgm_read_byte_near(data);
+			uint8_t const byte = pgm_read_byte(data);
 			display.writeColor(palette[byte & 0xF], 1);
 			if (col > 1) {
 				display.writeColor(palette[byte >> 4], 1);
@@ -368,7 +370,7 @@ void draw16bitData(uint16_t const *data, int const w, int const h)
 	int const loops = w * h;
 
 	for (int i=0; i<loops; ++i) {
-		display.writeColor(pgm_read_word_near(data), 1);
+		display.writeColor(pgm_read_word(data), 1);
 		data++;
 	}
 }
@@ -726,10 +728,12 @@ bool checkButtons(void)
 		else {
 			clockTimer.reinit(clockTimer.shotsLeft() + 15);
 		}
+		randomSeed(micros());
 		return true;
 	}
 	if (dnBtn.isPressed()) {
 		clockTimer.reinit(clockTimer.shotsLeft() > 15 ? clockTimer.shotsLeft() - 15 : 0);
+		randomSeed(micros());
 		return true;
 	}
 	return false;
@@ -950,12 +954,8 @@ void setup() {
 
 	pinMode(BUZZER_PIN, OUTPUT);
 
-	// display.setAddrWindow(0, 0, arrowPicWidth, arrowPicHeight);
-	// display.startWrite();
-	// draw4bitData(arrowPicData, arrowPicPalette, arrowPicWidth, arrowPicHeight);
-	// display.endWrite();
-	// while (1);
 	animateMotd();
+	randomSeed(micros());
 }
 
 
