@@ -43,3 +43,4 @@ private:
     unsigned long _periodMs;
     unsigned long _nextTrigMs;
 };
+
