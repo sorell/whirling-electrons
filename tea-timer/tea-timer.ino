@@ -42,6 +42,8 @@ struct SongPart {
 };
 
 struct Song {
+	char const *name;
+	uint16_t nameColor;
 	SongPart const *parts;
 	uint8_t size;
 };
@@ -222,9 +224,9 @@ SongPart constexpr amelieSong[] = {
 
 
 Song constexpr allSongs[] = {
-	{vaderSong, sizeof(vaderSong)/sizeof(vaderSong[0])},
-	{gotSong, sizeof(gotSong)/sizeof(gotSong[0])},
-	{amelieSong, sizeof(amelieSong)/sizeof(amelieSong[0])}
+	{"Imperial March", 0xF800, vaderSong, sizeof(vaderSong)/sizeof(vaderSong[0])},
+	{"Game of Thrones", 0xFA40, gotSong, sizeof(gotSong)/sizeof(gotSong[0])},
+	{"Amelie's Waltz", 0xFFE0, amelieSong, sizeof(amelieSong)/sizeof(amelieSong[0])}
 };
 
 
@@ -388,6 +390,7 @@ void draw16bitData(uint16_t const *data, int const w, int const h)
 #include <avr/pgmspace.h>
 
 // 1-bit picture data extracted from file ../tea-timer/motd.bmp
+uint16_t constexpr motdColor = toColor(0, 0x3f / 3, 0x1f);
 int constexpr motdWidth = 96;
 int constexpr motdHeight = 217;
 static uint8_t const PROGMEM motdData[] = {
@@ -720,23 +723,27 @@ static BtnDebounce upBtn(BTNUP_PIN, LOW, 20);
 static BtnDebounce dnBtn(BTNDN_PIN, LOW, 20);
 
 
-bool checkButtons(void)
+bool checkButtons(bool const mayChangeTime = false)
 {
 	if (upBtn.isPressed()) {
-		if (clockTimer.shotsLeft() == 0) {
-			clockTimer.reinit(2 * 60 + 30);
-		}
-		else if (clockTimer.shotsLeft() > 9 * 60 + 45) {
-			clockTimer.reinit(9 * 60 + 59);
-		}
-		else {
-			clockTimer.reinit(clockTimer.shotsLeft() + 15);
+		if (mayChangeTime) {
+			if (clockTimer.shotsLeft() == 0) {
+				clockTimer.reinit(2 * 60 + 30);
+			}
+			else if (clockTimer.shotsLeft() > 9 * 60 + 45) {
+				clockTimer.reinit(9 * 60 + 59);
+			}
+			else {
+				clockTimer.reinit(clockTimer.shotsLeft() + 15);
+			}
 		}
 		randomSeed(micros());
 		return true;
 	}
 	if (dnBtn.isPressed()) {
-		clockTimer.reinit(clockTimer.shotsLeft() > 15 ? clockTimer.shotsLeft() - 15 : 0);
+		if (mayChangeTime) {
+			clockTimer.reinit(clockTimer.shotsLeft() > 15 ? clockTimer.shotsLeft() - 15 : 0);
+		}
 		randomSeed(micros());
 		return true;
 	}
@@ -744,31 +751,74 @@ bool checkButtons(void)
 }
 
 
-void animateMotd(void)
+bool wait4Button(int const ms)
 {
-	uint16_t constexpr motdColor = toColor(0, 0x3f / 3, 0x1f);
-	display.fillScreen(BLACK);
+	SoftTimer deadline(ms);
+	while (!deadline.hasExpired()) {
+		if (checkButtons()) {
+			return true;
+		}
+	}
+	return false;	
+}
 
+
+bool fadingText(char const *const text, int const x, int const y, uint16_t const firstColor, uint16_t const lastColor, int steps)
+{
+	bool out = false;
+	float const deltaRed = (float) (toRed(firstColor) - toRed(lastColor)) / steps;
+	float const deltaGreen = (float) (toGreen(firstColor) - toGreen(lastColor)) / steps;
+	float const deltaBlue = (float) (toBlue(firstColor) - toBlue(lastColor)) / steps;
+
+	for (--steps; steps >= 0; --steps) {
+		float const factor = steps;
+		uint16_t const color = toColor(toRed(lastColor) + deltaRed * factor, toGreen(lastColor) + deltaGreen * factor, toBlue(lastColor) + deltaBlue * factor);
+		display.setCursor(x, y);
+		display.setTextColor(color);
+		display.print(text);
+		if (checkButtons()) {
+			out = true;
+		}
+	}
+
+	return out;
+}
+
+
+bool animateMotd(void)
+{
+	bool out = false;
+	int constexpr stepsToFade = 30;
+	float constexpr deltaRed = (float) toRed(motdColor) / stepsToFade;
+	float constexpr deltaGreen = (float) toGreen(motdColor) / stepsToFade;
+	float constexpr deltaBlue = (float) toBlue(motdColor) / stepsToFade;
+
+	int steps = stepsToFade;
 	int offset = -height;
 
-	while (offset < motdHeight + 1) {
-		if (checkButtons()) {
-			display.fillScreen(BLACK);
-			return;
+	display.fillScreen(BLACK);
+
+	while (steps > 0  &&  offset < motdHeight + 1) {
+		if (out) {
+			--steps;
 		}
+		float const factor = steps;
+		uint16_t const color = toColor(deltaRed * factor, deltaGreen * factor, deltaBlue * factor);
+
+		out |= checkButtons();
 
 		display.setAddrWindow(0, 0, width, height);
 		display.startWrite();
 
 		if (offset < 0) {
 			display.writeColor(BLACK, -offset * motdWidth);
-			draw1bitData(motdData, motdColor, motdWidth, height + offset);
+			draw1bitData(motdData, color, motdWidth, height + offset);
 		}
 		else if (offset < motdHeight - height) {
-			draw1bitData(motdData + offset * motdWidth / 8, motdColor, motdWidth, height);
+			draw1bitData(motdData + offset * motdWidth / 8, color, motdWidth, height);
 		}
 		else {
-			draw1bitData(motdData + offset * motdWidth / 8, motdColor, motdWidth, motdHeight - offset);
+			draw1bitData(motdData + offset * motdWidth / 8, color, motdWidth, motdHeight - offset);
 			display.writeColor(BLACK, (height - (motdHeight - offset)) * motdWidth);
 		}
 
@@ -776,6 +826,32 @@ void animateMotd(void)
 
 		++offset;
 	}
+
+	return out;
+}
+
+
+bool showSongs(void)
+{
+	bool out = false;
+
+	display.fillScreen(BLACK);
+	display.setTextSize(2);
+
+	out = fadingText("Jukebox", 5, 0, BLACK, motdColor, 100);
+	if (!out)  out = wait4Button(1000);
+
+	for (unsigned int i=0; !out && i<sizeof(allSongs)/sizeof(allSongs[0]); ++i) {
+		if (!out) out = fadingText(allSongs[i].name, 0, 30, BLACK, allSongs[i].nameColor, 60);
+		if (!out) out = wait4Button(1000);
+		out |= fadingText(allSongs[i].name, 0, 30, allSongs[i].nameColor, BLACK, 60);
+		if (!out) out = wait4Button(1000);
+	}
+
+	if (!out) out = wait4Button(500);
+	out |= fadingText("Jukebox", 5, 0, motdColor, BLACK, 100);
+	display.fillScreen(BLACK);
+	return out;
 }
 
 
@@ -790,7 +866,7 @@ void drawTime(int time)
 
 	// Determine sliding color from firstColor to lastColor using remaining time as a factor
 	float const factor = time > 60 ? 60 : time;
-	uint16_t const color = toColor(toRed(lastColor) + (deltaRed * factor + 0.5f), toGreen(lastColor) + (deltaGreen * factor + 0.5f), toBlue(lastColor) + (deltaBlue * factor + 0.5f));
+	uint16_t const color = toColor(toRed(lastColor) + deltaRed * factor, toGreen(lastColor) + deltaGreen * factor, toBlue(lastColor) + deltaBlue * factor);
 
 	// Circle animation
 	// if (time < 6) {
@@ -961,7 +1037,9 @@ void setup() {
 
 	pinMode(BUZZER_PIN, OUTPUT);
 
-	animateMotd();
+	if (!animateMotd()) {
+		showSongs();
+	}
 	randomSeed(micros());
 }
 
@@ -971,7 +1049,7 @@ void loop() {
 	drawTime(clockTimer.shotsLeft());
 
 	while (!clockTimer.hasExpired()) {
-		if (checkButtons()) {
+		if (checkButtons(true)) {
 			break;
 		}
 	}
