@@ -46,7 +46,8 @@ struct Song {
 	uint8_t size;
 };
 
-// Game of Thrones theme from https://flat.io/score/597a6d912c9b0e5c57a1b244-game-of-thrones-main-theme
+
+// Star Wars Imperial March theme from somewhere.. sorry, lost the reference.
 Note constexpr PROGMEM vader1[] = {
 	{A4, 500}, {A4, 500}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}, 
 	{E5, 500}, {E5, 500}, {E5, 500}, {F5, 350}, {C5, 150}, {A4, 500}, {F4, 350}, {C5, 150}, {A4, 650}, {0, 500}
@@ -187,7 +188,8 @@ Note constexpr PROGMEM amelie49[] = {
 };
 
 SongPart constexpr amelieSong[] = {
-	{amelie1_14, sizeof(amelie1_14)/sizeof(amelie1_14[0])},
+	// Maybe not play the intro
+	// {amelie1_14, sizeof(amelie1_14)/sizeof(amelie1_14[0])},
 	{amelie17_19n21_23, sizeof(amelie17_19n21_23)/sizeof(amelie17_19n21_23[0])},
 	{amelie20, sizeof(amelie20)/sizeof(amelie20[0])},
 	{amelie17_19n21_23, sizeof(amelie17_19n21_23)/sizeof(amelie17_19n21_23[0])},
@@ -280,21 +282,23 @@ static uint8_t const height = display.height();
 static uint8_t const radius = (int) width * 5 / 8;
 
 
-// SSD1331 takes in 16-bit (5, 6, 5) RBG pixels.
+// SSD1331 takes in 16-bit RBG pixels (5 red, 6 green, 5 blue).
 //
-//  -----------------------------------------------------------------
-// | RED                 | GREEN               | BLUE                |
-// |-----------------------------------------------------------------|
-// | 5 bits              | 6 bits              | 5 bits              |
-// | (0-31) << 11        | (0-63) << 6         | (0-31) << 0         |
-// | 0b11111000 00000000 | 0b00000111 11100000 | 0b00000000 00011111 |
-// | 0xF8000             | 0x07E0              | 0x001F              |
-//  -----------------------------------------------------------------
+//  ----------------------------------------------------------------------------
+// | Color    | RED                 | GREEN               | BLUE                |
+// |----------|-----------------------------------------------------------------|
+// | Bits     | 5                   | 6                   | 5                   |
+// | Values   | [0..31]             | [0..63]             | [0..31]             |
+// | Shift    | << 11               | << 5                | << 0                |
+// | Bin mask | 0b11111000 00000000 | 0b00000111 11100000 | 0b00000000 00011111 |
+// | Hex mask | 0xF8000             | 0x07E0              | 0x001F              |
+//  ----------------------------------------------------------------------------
 
-uint8_t toRed(uint16_t const color) { return (color >> 11) & 0x1f; }
-uint8_t toGreen(uint16_t const color) { return (color >> 5) & 0x3f; }
-uint8_t toBlue(uint16_t const color) { return color & 0x1f; }
-uint16_t toColor(uint16_t const r, uint16_t const g, uint16_t const b) { return ((r & 0x1f) << 11) | ((g & 0x3f) << 5) | (b & 0x1f); }
+// uint8_t toRed(uint16_t const color) { return (color >> 11) & 0x1f; }
+constexpr uint8_t toRed(uint16_t const color) { return (color >> 11) & 0x1f; }
+constexpr uint8_t toGreen(uint16_t const color) { return (color >> 5) & 0x3f; }
+constexpr uint8_t toBlue(uint16_t const color) { return color & 0x1f; }
+constexpr uint16_t toColor(uint16_t const r, uint16_t const g, uint16_t const b) { return ((r & 0x1f) << 11) | ((g & 0x3f) << 5) | (b & 0x1f); }
 
 #define	BLACK      0x0000
 #define	BLUE       0x001F
@@ -742,7 +746,7 @@ bool checkButtons(void)
 
 void animateMotd(void)
 {
-	uint16_t const motdColor = toColor(0, 0x3f / 3, 0x1f);
+	uint16_t constexpr motdColor = toColor(0, 0x3f / 3, 0x1f);
 	display.fillScreen(BLACK);
 
 	int offset = -height;
@@ -780,9 +784,9 @@ void drawTime(int time)
 {
 	uint16_t constexpr firstColor = GREEN;
 	uint16_t constexpr lastColor = RED;
-	static float const deltaRed = (float) (toRed(firstColor) - toRed(lastColor)) / 60.0f;
-	static float const deltaGreen = (float) (toGreen(firstColor) - toGreen(lastColor)) / 60.0f;
-	static float const deltaBlue = (float) (toBlue(firstColor) - toBlue(lastColor)) / 60.0f;
+	static float constexpr deltaRed = (float) (toRed(firstColor) - toRed(lastColor)) / 60.0f;
+	static float constexpr deltaGreen = (float) (toGreen(firstColor) - toGreen(lastColor)) / 60.0f;
+	static float constexpr deltaBlue = (float) (toBlue(firstColor) - toBlue(lastColor)) / 60.0f;
 
 	// Determine sliding color from firstColor to lastColor using remaining time as a factor
 	float const factor = time > 60 ? 60 : time;
@@ -830,7 +834,7 @@ void drawTime(int time)
 
 void animateSteam(int offset, int x, int y)
 {
-	int const rowBytes = (steamPicWidth + 3) / 4;
+	int constexpr rowBytes = (steamPicWidth + 3) / 4;
 
 	display.setAddrWindow(x, y, steamPicWidth, steamPicHeight);
 	display.startWrite();
@@ -885,7 +889,7 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 	display.endWrite();
 
 	// Animate steam
-	int const rowBytes = (steamPicWidth + 3) / 4;
+	int constexpr rowBytes = (steamPicWidth + 3) / 4;
 	int heightOffset = 0;
 	int cont = 1200;
 	SoftTimer animationDelay;
@@ -894,12 +898,11 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 	SongPart const *songPart = songParts;
 	Note const *note = songPart->notes;
 
-
 	while (cont) {
 		display.setAddrWindow(39, 13, steamPicWidth, steamPicHeight);
 		display.startWrite();
 
-		// int const lastRow = heightOffset - 1 < 0 : steamPicHeight
+		// This animates the steam
 		int row = heightOffset;
 		do {
 			if (musicDelay.hasExpired()) {
@@ -918,6 +921,8 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 		}
 		--cont;
 		animationDelay.init(100, SoftTimer::ONESHOT);
+
+		// This plays music between steam animation
 		while (!animationDelay.hasExpired()) {
 			if (musicDelay.hasExpired()) {
 				playNextNote(songParts, parts, &songPart, &note, &musicDelay);
@@ -925,6 +930,7 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 			if (checkButtons()) {
 				if (musicDelay.shotsLeft()  &&  !clockTimer.shotsLeft()) {
 					musicDelay.stop();
+					noTone(BUZZER_PIN);
 				}
 				else {
 					cont = 0;
@@ -936,6 +942,7 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 
 	display.fillScreen(BLACK);
 }
+
 
 void setup() {
 	Serial.begin(115200);
@@ -969,15 +976,10 @@ void loop() {
 		}
 	}
 
-	// Tea is served!
 	if (clockTimer.shotsLeft() == 0) {
+		// Tea is served!
 		clockTimer.reinit(0);
 		int const songNum = random(sizeof(allSongs)/sizeof(allSongs[0]));
 		teacupAnimationWithSong(allSongs[songNum].parts, allSongs[songNum].size);
-
-		// If clockTimer was changed by up button during teacupAnimation()
-		// if (clockTimer.shotsLeft() > 0) {
-		// 	drawTime(clockTimer.shotsLeft());
-		// }
 	}
 }
