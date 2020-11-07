@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name parking-timer-kicad)(type Legacy)(uri ${KIPRJMOD}/parking-timer-kicad.lib)(options "")(descr ""))
+)
