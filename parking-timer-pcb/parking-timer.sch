@@ -543,7 +543,7 @@ Wire Wire Line
 Wire Wire Line
 	2050 5450 2050 5300
 Text GLabel 2200 5650 2    50   Input ~ 0
-SPI_SCL
+SPI_SCK
 Text GLabel 2200 5750 2    50   Input ~ 0
 SPI_MOSI
 Text GLabel 2200 5850 2    50   Output ~ 0
@@ -568,4 +568,45 @@ Wire Wire Line
 Connection ~ 2050 6450
 Wire Wire Line
 	2050 6450 2050 6650
+$Comp
+L Connector_Generic:Conn_01x02 J5
+U 1 1 5FB16AE6
+P 1700 2250
+F 0 "J5" H 1618 1925 50  0000 C CNN
+F 1 "Conn_01x02" H 1618 2016 50  0000 C CNN
+F 2 "parking-timer-pcb:BatteryHolder" H 1700 2250 50  0001 C CNN
+F 3 "~" H 1700 2250 50  0001 C CNN
+	1    1700 2250
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0115
+U 1 1 5FB17452
+P 2000 2350
+F 0 "#PWR0115" H 2000 2100 50  0001 C CNN
+F 1 "GND" H 2005 2177 50  0000 C CNN
+F 2 "" H 2000 2350 50  0001 C CNN
+F 3 "" H 2000 2350 50  0001 C CNN
+	1    2000 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VDD #PWR0116
+U 1 1 5FB17734
+P 2000 2050
+F 0 "#PWR0116" H 2000 1900 50  0001 C CNN
+F 1 "VDD" H 2015 2223 50  0000 C CNN
+F 2 "" H 2000 2050 50  0001 C CNN
+F 3 "" H 2000 2050 50  0001 C CNN
+	1    2000 2050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 2150 2000 2150
+Wire Wire Line
+	2000 2150 2000 2050
+Wire Wire Line
+	1900 2250 2000 2250
+Wire Wire Line
+	2000 2250 2000 2350
 $EndSCHEMATC
