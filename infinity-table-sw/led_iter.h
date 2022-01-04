@@ -20,7 +20,7 @@ public:
 	T *operator -> () { return p_; }
 	bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
 	bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
-	// void at() const { fprintf(stderr, "iterator at %d\n", (int) (p_ - leds)); }
+
 protected:
 	IteratorBase(T *p) : p_(p) {}
 	T *p_;
@@ -49,8 +49,8 @@ class LedArrayReverse {};
 class LedArrayBase
 {
 public:
-	template <typename T>
-	void forEach(T f) 
+	template <typename F>
+	void forEach(F f) 
 	{ 
 		for (CRGB *p = begin_; p != end_; ++p) { f(*p); }
 	}
@@ -104,39 +104,23 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-//template <int N, LedArray<LedArrayForward> IS>
-//class TVirtualLedArray;
-
-
-//template <int N, LedArray<LedArrayForward> ...IS>
-template <int N>
+template <int N, typename T = LedArray<LedArrayForward>>
 class VirtualLedArray
 {
 public:
-	VirtualLedArray(LedArray<LedArrayForward> *const *ledArrays) : ledArrays_(ledArrays)
+	VirtualLedArray(T *const *ledArrays) : ledArrays_(ledArrays)
 	{
 	}
 
-	template <typename T>
-	void forEach(T f, int pos, int num)
+	template <typename F>
+	void forEach(F f, int pos, int num)
 	{
 		for (int arrayIdx = 0; arrayIdx < N; ++arrayIdx)
-		{
-			for (auto it = ledArrays_[arrayIdx]->begin(); it != ledArrays_[arrayIdx]->end(); ++it)
-				f(*it);
-		}
+			ledArrays_[arrayIdx]->forEach(f);
 	}
 
-	template <typename T>
-	void forRange(T f, int fromIdx, int amount)
+	template <typename F>
+	void forRange(F f, int fromIdx, int amount)
 	{
 		int arrayIdx = 0;
 		while (fromIdx >= ledArrays_[arrayIdx]->count())
@@ -156,7 +140,7 @@ public:
 	}
 
 private:
-	LedArray<LedArrayForward> *const *const ledArrays_;
+	T *const *const ledArrays_;
 };
 
 
