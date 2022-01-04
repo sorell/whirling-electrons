@@ -116,7 +116,8 @@ static LedUtils::LedArray<> right2(leds, 173, 23);
 static LedUtils::LedArray<> top2(leds, 196, 41);
 static LedUtils::LedArray<> left2(leds, 237, 23);
 
-
+static LedUtils::LedArray<> *upperRowPtrs[4] = {&btm1, &right1, &top1, &left1};
+static LedUtils::VirtualLedArray<4> upperRow(upperRowPtrs);
 
 
 
@@ -199,6 +200,7 @@ void setup()
 	// }
 
 	slideAll(CRGB::Black, SemiMagenta, 100);
+
 	delay(1000);
 }
 
