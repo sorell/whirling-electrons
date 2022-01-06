@@ -9,10 +9,17 @@
 // #define DATA_PIN 9
 // #define MAX_BRIGHT 30
 
+//
+// Led type defined in FastLED library.
+//
 class CRBG;
 
 namespace LedUtils {
 
+
+//
+// An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
+//
 template <typename T>
 class IteratorBase {
 public:
@@ -22,10 +29,13 @@ public:
 	bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
 
 protected:
-	IteratorBase(T *p) : p_(p) {}
+	IteratorBase(T *p) : p_(p) {};
 	T *p_;
 };
 
+//
+// A forward advancing Iterator for LedArray.
+//
 template <typename T>
 class ForwardIterator : public IteratorBase<T> {
 public:
@@ -34,6 +44,9 @@ public:
 	ForwardIterator &operator -- () { IteratorBase<T>::p_--; return *this; }
 };
 
+//
+// A backward advancing Iterator for LedArray.
+//
 template <typename T>
 class ReverseIterator : public IteratorBase<T> {
 public:
@@ -43,12 +56,24 @@ public:
 };
 
 
+//
+// Helper types to denote LedArray's type
+//
 class LedArrayForward {};
 class LedArrayReverse {};
 
+
+//
+// An abstract base class containing common members of various LedArray classes.
+//
+// This is a virtual array of CRGB that is projected onto a continuous, actual array of CRGB allocated 
+// in the sw, holding only the begin and end points, whose inheriting classes provide means to iterate
+// between them.
+//
 class LedArrayBase
 {
 public:
+	// Call function f for each CRGB between begin_ and end_.
 	template <typename F>
 	void forEach(F f) 
 	{ 
@@ -68,6 +93,13 @@ protected:
 };
 
 
+//
+// A continuous array of leds, traversed to forward direction by default Iterator.
+//
+// For a strip of LEDs that is physically placed so that the control signal enters from left hand side,
+// (meaning that index 0 of the LEDs in the sw starts from left and increments to right) this class' default
+// iterator's ++-operator advances from left to right.
+//
 template <typename T = LedArrayForward>
 class LedArray : public LedArrayBase
 {
@@ -87,6 +119,16 @@ public:
 };
 
 
+//
+// A continuous array of leds, traversed to backward direction by default Iterator.
+//
+// A virtual array of CRGB that is projected onto a continuous, actual array of CRGB allocated in the sw.
+// This cla
+//
+// For a strip of LEDs that is physically placed so that the control signal enters from right hand side,
+// (meaning that index 0 of the LEDs in the sw starts from right and increments to left) this class' default
+// iterator's ++-operator advances from right to left.
+//
 template <>
 class LedArray<LedArrayReverse> : public LedArrayBase
 {

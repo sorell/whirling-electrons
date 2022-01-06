@@ -17,7 +17,9 @@ CRGB squareTo(uint8_t const r, uint8_t const g, uint8_t const b)
 }
 
 
-
+//
+// Library class CRGB initialization helper
+//
 static CRGB CrbgInit(uint8_t const r, uint8_t const g, uint8_t const b)
 {
 	return {.red = (uint8_t) ((float) r / 255.0f * (float) MAX_BRIGHT), 
@@ -29,7 +31,7 @@ static CRGB CrbgInit(uint8_t const r, uint8_t const g, uint8_t const b)
 class ColorRange {
 public:
 	ColorRange(CRGB const &high, CRGB const &low) : 
-		high_(high), low_(low),
+		low_(low),
 		redInc_((float) (high.red - low.red) / 100.0f), 
 		greenInc_((float) (high.green - low.green) / 100.0f),
 		blueInc_((float) (high.blue - low.blue) / 100.0f) {}
@@ -39,7 +41,6 @@ public:
 	}
 
 private:
-	CRGB const high_;
 	CRGB const low_;
 	float const redInc_;
 	float const greenInc_;
