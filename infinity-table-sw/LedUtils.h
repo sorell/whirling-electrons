@@ -2,66 +2,13 @@
 #define _SS_LED_ITER_H
 
 
-
-// #include <FastLED.h>
-
-// #define NUM_LEDS 260
-// #define DATA_PIN 9
-// #define MAX_BRIGHT 30
-
 //
 // Led type defined in FastLED library.
 //
 class CRBG;
 
+
 namespace LedUtils {
-
-
-//
-// An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
-//
-template <typename T>
-class IteratorBase {
-public:
-	T &operator * () { return *p_; }
-	T *operator -> () { return p_; }
-	bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
-	bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
-
-protected:
-	IteratorBase(T *p) : p_(p) {};
-	T *p_;
-};
-
-//
-// A forward advancing Iterator for LedArray.
-//
-template <typename T>
-class ForwardIterator : public IteratorBase<T> {
-public:
-	ForwardIterator(T *p) : IteratorBase<T>(p) {}
-	ForwardIterator &operator ++ () { IteratorBase<T>::p_++; return *this; }
-	ForwardIterator &operator -- () { IteratorBase<T>::p_--; return *this; }
-};
-
-//
-// A backward advancing Iterator for LedArray.
-//
-template <typename T>
-class ReverseIterator : public IteratorBase<T> {
-public:
-	ReverseIterator(T *p) : IteratorBase<T>(p) {}
-	ReverseIterator &operator ++ () { IteratorBase<T>::p_--; return *this; }
-	ReverseIterator &operator -- () { IteratorBase<T>::p_++; return *this; }
-};
-
-
-//
-// Helper types to denote LedArray's type
-//
-class LedArrayForward {};
-class LedArrayReverse {};
-
 
 //
 // An abstract base class containing common members of various LedArray classes.
@@ -70,26 +17,66 @@ class LedArrayReverse {};
 // in the sw, holding only the begin and end points, whose inheriting classes provide means to iterate
 // between them.
 //
-class LedArrayBase
+template <typename T>
+class ArrayBase
 {
 public:
-	// Call function f for each CRGB between begin_ and end_.
+	// Call function f for each item between begin_ and end_.
 	template <typename F>
 	void forEach(F f) 
 	{ 
-		for (CRGB *p = begin_; p != end_; ++p) { f(*p); }
+		for (T *p = begin_; p != end_; ++p) { f(*p); }
 	}
 
-	int count(void) const
+	int length(void) const
 	{
 		return end_ - begin_;
 	}
 
 protected:
-	LedArrayBase(CRGB *begin, CRGB *end) : begin_(begin), end_(end) {}
+	ArrayBase(T *begin, T *end) : begin_(begin), end_(end) {}
 
-	CRGB *const begin_;
-	CRGB *const end_;
+	//
+	// An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
+	//
+	class IteratorBase {
+	public:
+		T &operator * () { return *p_; }
+		T const &operator * () const { return *p_; }
+		T *operator -> () { return p_; }
+		T const *operator -> () const { return p_; }
+		bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
+		bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
+
+	protected:
+		IteratorBase(T *p) : p_(p) {};
+		T *p_;
+	};
+
+	//
+	// A forward advancing Iterator for LedArray.
+	//
+	class ForwardIterator : public IteratorBase {
+	public:
+		ForwardIterator(T *p) : IteratorBase(p) {}
+		ForwardIterator &operator ++ () { IteratorBase::p_++; return *this; }
+		ForwardIterator &operator -- () { IteratorBase::p_--; return *this; }
+	};
+
+	//
+	// A backward advancing Iterator for LedArray.
+	//
+	class ReverseIterator : public IteratorBase {
+	public:
+		ReverseIterator(T *p) : IteratorBase(p) {}
+		ReverseIterator &operator ++ () { IteratorBase::p_--; return *this; }
+		ReverseIterator &operator -- () { IteratorBase::p_++; return *this; }
+	};
+
+	T *const begin_;
+	T *const end_;
+
+	int i;
 };
 
 
@@ -100,89 +87,62 @@ protected:
 // (meaning that index 0 of the LEDs in the sw starts from left and increments to right) this class' default
 // iterator's ++-operator advances from left to right.
 //
-template <typename T = LedArrayForward>
-class LedArray : public LedArrayBase
+template <typename T>
+class Array : public ArrayBase<T>
 {
 public:
-	LedArray(CRGB *leds, uint8_t first, uint8_t amount) : LedArrayBase(leds + first, leds + first + amount) {}
+	Array(T *begin, int amount) : ArrayBase<T>(begin, begin + amount) {}
 
-	typedef ForwardIterator<CRGB> iterator;
-	typedef ReverseIterator<CRGB> r_iterator;
+	typedef typename ArrayBase<T>::ForwardIterator iterator;
+	typedef typename ArrayBase<T>::ReverseIterator r_iterator;
 
-	iterator begin() { return iterator(begin_); }
-	iterator end() { return iterator(end_); }
-	r_iterator r_begin() { return r_iterator(end_-1); }
-	r_iterator r_end() { return r_iterator(begin_-1); }
+	iterator begin() { return iterator(ArrayBase<T>::begin_); }
+	iterator end() { return iterator(ArrayBase<T>::end_); }
+	r_iterator r_begin() { return r_iterator(ArrayBase<T>::end_-1); }
+	r_iterator r_end() { return r_iterator(ArrayBase<T>::begin_-1); }
 
-	iterator at(int idx) { return iterator(begin_ + idx); }
-	r_iterator r_at(int idx) { return iterator(end_ - idx - 1); }
-};
-
-
-//
-// A continuous array of leds, traversed to backward direction by default Iterator.
-//
-// A virtual array of CRGB that is projected onto a continuous, actual array of CRGB allocated in the sw.
-// This cla
-//
-// For a strip of LEDs that is physically placed so that the control signal enters from right hand side,
-// (meaning that index 0 of the LEDs in the sw starts from right and increments to left) this class' default
-// iterator's ++-operator advances from right to left.
-//
-template <>
-class LedArray<LedArrayReverse> : public LedArrayBase
-{
-public:
-	LedArray(CRGB *leds, uint8_t first, uint8_t amount) : LedArrayBase(leds + first + amount - 1, leds + first - 1) {}
-
-	typedef ReverseIterator<CRGB> iterator;
-	typedef ForwardIterator<CRGB> r_iterator;
-
-	iterator begin() { return iterator(begin_); }
-	iterator end() { return iterator(end_); }
-	r_iterator r_begin() { return r_iterator(end_+1); }
-	r_iterator r_end() { return r_iterator(begin_+1); }
+	iterator at(int idx) { return iterator(ArrayBase<T>::begin_ + idx); }
+	r_iterator r_at(int idx) { return r_iterator(ArrayBase<T>::end_ - idx - 1); }
 };
 
 
 
-template <int N, typename T = LedArray<LedArrayForward>>
-class VirtualLedArray
+template <typename T>
+class LoopingMultiArray
 {
 public:
-	VirtualLedArray(T *const *ledArrays) : ledArrays_(ledArrays)
+	LoopingMultiArray(Array<T> *const *arrays, int nArrays) : arrays_(arrays), nArrays_(nArrays) {}
+
+	template <typename F>
+	void forEach(F f)
 	{
+		for (int arrayIdx = 0; arrayIdx < nArrays_; ++arrayIdx)
+			arrays_[arrayIdx]->forEach(f);
 	}
 
 	template <typename F>
-	void forEach(F f, int pos, int num)
-	{
-		for (int arrayIdx = 0; arrayIdx < N; ++arrayIdx)
-			ledArrays_[arrayIdx]->forEach(f);
-	}
-
-	template <typename F>
-	void forRange(F f, int fromIdx, int amount)
+	void forRange(F f, int begin, int amount)
 	{
 		int arrayIdx = 0;
-		while (fromIdx >= ledArrays_[arrayIdx]->count())
+		while (begin >= arrays_[arrayIdx]->length())
 		{
-			if (++arrayIdx >= N)
+			if (++arrayIdx >= nArrays_)
 				arrayIdx = 0;
 		}
 
 		while (amount > 0)
 		{
-			for (auto it = ledArrays_[arrayIdx]->at(fromIdx); it != ledArrays_[arrayIdx]->end() && amount; ++it, --amount)
+			for (auto it = arrays_[arrayIdx]->at(begin); it != arrays_[arrayIdx]->end() && amount; ++it, --amount)
 				f(*it);
 
-			if (++arrayIdx >= N)
+			if (++arrayIdx >= nArrays_)
 				arrayIdx = 0;
 		}
 	}
 
 private:
-	T *const *const ledArrays_;
+	Array<T> *const *const arrays_;
+	int const nArrays_;
 };
 
 

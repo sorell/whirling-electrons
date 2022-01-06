@@ -105,20 +105,20 @@ static unsigned long nextChange;
 // static Hilight hilight;
 
 
-static LedUtils::LedArray<> all1(leds, 0, 132);
-static LedUtils::LedArray<> all2(leds, 132, 128);
+static LedUtils::Array<CRGB> all1(leds, 132);
+static LedUtils::Array<CRGB> all2(leds + 132, 128);
 
-static LedUtils::LedArray<> btm1(leds, 0, 42);
-static LedUtils::LedArray<> right1(leds, 42, 24);
-static LedUtils::LedArray<> top1(leds, 66, 42);
-static LedUtils::LedArray<> left1(leds, 108, 24);
-static LedUtils::LedArray<> btm2(leds, 132, 41);
-static LedUtils::LedArray<> right2(leds, 173, 23);
-static LedUtils::LedArray<> top2(leds, 196, 41);
-static LedUtils::LedArray<> left2(leds, 237, 23);
+static LedUtils::Array<CRGB> btm1(leds, 42);
+static LedUtils::Array<CRGB> right1(leds + 42, 24);
+static LedUtils::Array<CRGB> top1(leds + 66, 42);
+static LedUtils::Array<CRGB> left1(leds + 108, 24);
+static LedUtils::Array<CRGB> btm2(leds + 132, 41);
+static LedUtils::Array<CRGB> right2(leds + 173, 23);
+static LedUtils::Array<CRGB> top2(leds + 196, 41);
+static LedUtils::Array<CRGB> left2(leds + 237, 23);
 
-static LedUtils::LedArray<> *upperRowPtrs[4] = {&btm1, &right1, &top1, &left1};
-static LedUtils::VirtualLedArray<4> upperRow(upperRowPtrs);
+static LedUtils::Array<CRGB> *upperRowPtrs[] = {&btm1, &right1, &top1, &left1};
+static LedUtils::LoopingMultiArray<CRGB> upperRow(upperRowPtrs, sizeof(upperRowPtrs)/sizeof(upperRowPtrs[0]));
 
 
 
@@ -394,39 +394,39 @@ private:
 
 void loop()
 {
-	while (1) {
-		GlowWorm<LedUtils::ForwardIterator<CRGB>> glowWorms[4] = {{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
-			{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
-			{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
-			{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()}};
-		for (uint8_t i=0; i<33; ++i) glowWorms[1].advance();
-		for (uint8_t i=0; i<66; ++i) glowWorms[2].advance();
-		for (uint8_t i=0; i<99; ++i) glowWorms[3].advance();
-		do {
-			for (uint8_t i=0; i<sizeof(glowWorms)/sizeof(glowWorms[0]); ++i) {
-				glowWorms[i].placement();
-				glowWorms[i].advance();
-			}
-			FastLED.show();
-			delay(5);
-		} while (1);
-	}
-	{
-		GlowWorm<LedUtils::ForwardIterator<CRGB>> glowWorm(12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end());
+	// while (1) {
+	// 	GlowWorm<LedUtils::ForwardIterator<CRGB>> glowWorms[4] = {{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
+	// 		{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
+	// 		{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
+	// 		{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()}};
+	// 	for (uint8_t i=0; i<33; ++i) glowWorms[1].advance();
+	// 	for (uint8_t i=0; i<66; ++i) glowWorms[2].advance();
+	// 	for (uint8_t i=0; i<99; ++i) glowWorms[3].advance();
+	// 	do {
+	// 		for (uint8_t i=0; i<sizeof(glowWorms)/sizeof(glowWorms[0]); ++i) {
+	// 			glowWorms[i].placement();
+	// 			glowWorms[i].advance();
+	// 		}
+	// 		FastLED.show();
+	// 		delay(5);
+	// 	} while (1);
+	// }
+	// {
+	// 	GlowWorm<LedUtils::ForwardIterator<CRGB>> glowWorm(12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end());
 
-		do {
-			glowWorm.placement();
-			FastLED.show();
-		} while (glowWorm.advance());
-	}
-	{
-		GlowWorm<LedUtils::ReverseIterator<CRGB>> glowWorm(12, SemiMagenta, CRGB::Magenta, all1.r_begin(), all1.r_end());
+	// 	do {
+	// 		glowWorm.placement();
+	// 		FastLED.show();
+	// 	} while (glowWorm.advance());
+	// }
+	// {
+	// 	GlowWorm<LedUtils::ReverseIterator<CRGB>> glowWorm(12, SemiMagenta, CRGB::Magenta, all1.r_begin(), all1.r_end());
 
-		do {
-			glowWorm.placement();
-			FastLED.show();
-		} while (glowWorm.advance());
-	}
+	// 	do {
+	// 		glowWorm.placement();
+	// 		FastLED.show();
+	// 	} while (glowWorm.advance());
+	// }
 #if 0
 	while (startPoint != all1.end()) {
 		auto it = startPoint;
