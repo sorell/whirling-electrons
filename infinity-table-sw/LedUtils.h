@@ -11,6 +11,48 @@ class CRBG;
 namespace LedUtils {
 
 //
+// An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
+//
+template <typename T>
+class IteratorBase {
+public:
+	typename T::value_type &operator * () { return *p_; }
+	typename T::value_type const &operator * () const { return *p_; }
+	typename T::value_type *operator -> () { return p_; }
+	typename T::value_type const *operator -> () const { return p_; }
+
+	bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
+	bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
+
+protected:
+	IteratorBase(typename T::ptr_type p) : p_(p) {};
+	typename T::ptr_type p_;
+};
+
+//
+// A forward advancing Iterator for LedArray.
+//
+template <typename T>
+class ForwardIterator : public IteratorBase<T> {
+public:
+	ForwardIterator(typename T::ptr_type p) : IteratorBase<T>(p) {}
+	ForwardIterator &operator ++ () { IteratorBase<T>::p_++; return *this; }
+	ForwardIterator &operator -- () { IteratorBase<T>::p_--; return *this; }
+};
+
+//
+// A backward advancing Iterator for LedArray.
+//
+template <typename T>
+class ReverseIterator : public IteratorBase<T> {
+public:
+	ReverseIterator(typename T::ptr_type p) : IteratorBase<T>(p) {}
+	ReverseIterator &operator ++ () { IteratorBase<T>::p_--; return *this; }
+	ReverseIterator &operator -- () { IteratorBase<T>::p_++; return *this; }
+};
+
+
+//
 // An abstract base class containing common members of various LedArray classes.
 //
 // This is a virtual array of CRGB that is projected onto a continuous, actual array of CRGB allocated 
@@ -21,11 +63,14 @@ template <typename T>
 class ArrayBase
 {
 public:
+	typedef T value_type;
+	typedef T *ptr_type;
+
 	// Call function f for each item between begin_ and end_.
 	template <typename F>
 	void forEach(F f) 
 	{ 
-		for (T *p = begin_; p != end_; ++p) { f(*p); }
+		for (ptr_type p = begin_; p != end_; ++p) { f(*p); }
 	}
 
 	int length(void) const
@@ -34,49 +79,10 @@ public:
 	}
 
 protected:
-	ArrayBase(T *begin, T *end) : begin_(begin), end_(end) {}
+	ArrayBase(ptr_type begin, ptr_type end) : begin_(begin), end_(end) {}
 
-	//
-	// An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
-	//
-	class IteratorBase {
-	public:
-		T &operator * () { return *p_; }
-		T const &operator * () const { return *p_; }
-		T *operator -> () { return p_; }
-		T const *operator -> () const { return p_; }
-		bool operator == (IteratorBase const &rhs) const { return p_ == rhs.p_; }
-		bool operator != (IteratorBase const &rhs) const { return p_ != rhs.p_; }
-
-	protected:
-		IteratorBase(T *p) : p_(p) {};
-		T *p_;
-	};
-
-	//
-	// A forward advancing Iterator for LedArray.
-	//
-	class ForwardIterator : public IteratorBase {
-	public:
-		ForwardIterator(T *p) : IteratorBase(p) {}
-		ForwardIterator &operator ++ () { IteratorBase::p_++; return *this; }
-		ForwardIterator &operator -- () { IteratorBase::p_--; return *this; }
-	};
-
-	//
-	// A backward advancing Iterator for LedArray.
-	//
-	class ReverseIterator : public IteratorBase {
-	public:
-		ReverseIterator(T *p) : IteratorBase(p) {}
-		ReverseIterator &operator ++ () { IteratorBase::p_--; return *this; }
-		ReverseIterator &operator -- () { IteratorBase::p_++; return *this; }
-	};
-
-	T *const begin_;
-	T *const end_;
-
-	int i;
+	ptr_type const begin_;
+	ptr_type const end_;
 };
 
 
@@ -93,8 +99,8 @@ class Array : public ArrayBase<T>
 public:
 	Array(T *begin, int amount) : ArrayBase<T>(begin, begin + amount) {}
 
-	typedef typename ArrayBase<T>::ForwardIterator iterator;
-	typedef typename ArrayBase<T>::ReverseIterator r_iterator;
+	typedef ForwardIterator<Array<T>> iterator;
+	typedef ReverseIterator<Array<T>> r_iterator;
 
 	iterator begin() { return iterator(ArrayBase<T>::begin_); }
 	iterator end() { return iterator(ArrayBase<T>::end_); }
@@ -114,6 +120,9 @@ class LoopingMultiArray
 {
 public:
 	LoopingMultiArray(Array<T> *const *arrays, int nArrays) : arrays_(arrays), nArrays_(nArrays) {}
+
+	typedef T value_type;
+	typedef int ptr_type;
 
 	template <typename F>
 	void forEach(F f)
@@ -141,6 +150,17 @@ public:
 				arrayIdx = 0;
 		}
 	}
+
+	// typedef ForwardIterator<LoopingMultiArray<T>> iterator;
+	// typedef ReverseIterator<LoopingMultiArray<T>> r_iterator;
+
+	// iterator begin() { return iterator(arrays_); }
+	// iterator end() { return iterator(ArrayBase<T>::end_); }
+	// r_iterator r_begin() { return r_iterator(ArrayBase<T>::end_-1); }
+	// r_iterator r_end() { return r_iterator(arrays_-1); }
+
+	// iterator at(int idx) { return iterator(arrays_ + idx); }
+	// r_iterator r_at(int idx) { return r_iterator(ArrayBase<T>::end_ - idx - 1); }
 
 private:
 	Array<T> *const *const arrays_;

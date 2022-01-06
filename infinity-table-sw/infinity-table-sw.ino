@@ -222,7 +222,7 @@ void setup()
 	int idx = 0;
 	while (1)
 	{
-		for (auto it = upperRow.begin(); it != upperRow.end(); ++it)
+		for (auto it = top1.begin(); it != top1.end(); ++it)
 		{
 			*it = pink;
 			FastLED.show();
