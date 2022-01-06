@@ -5,7 +5,34 @@
 #define DATA_PIN 9
 #define MAX_BRIGHT 30
 
+// Facts
+// =====
+// - There are 260 leds in the table, in two rows.
+// - It takes 94 ms to draw all the 260 leds once.
 
+
+// Dimensions
+// ==========
+//  * * * * * * * * * .. * * * * * * * * *  <-- top1 (42)
+//   * * * * * * * * *..* * * * * * * * *   <-- top2 (41)
+//  *                                    *
+//   *                                  *
+//  *                                    *
+//   *                                  *
+//  *                                    *
+//   *                                  *
+//  .. <-- left1 (24)  right2 (23) -->  ..
+//  ..  <-- left2 (23)                  .. <-- right1 (24)
+//   *                                  *
+//  *                                    *
+//   *                                  *
+//  *                                    *
+//   *                                  *
+//  *                                    *
+//   * * * * * * * * *..* * * * * * * * *   <-- btm2 (41)
+//  * * * * * * * * * .. * * * * * * * * *  <-- btm1 (42)
+//  ^
+//  \- wire
 
 static CRGB leds[NUM_LEDS];
 static LedUtils::SquaredVal const squaredVal;
@@ -61,7 +88,8 @@ public:
 #endif
 
 static CRGB const black = {.red = 0, .green = 0, .blue = 0};
-static ColorRange const pink = {CrbgInit(255, 110, 199), CrbgInit(26, 11, 20)};
+static CRGB const pink = CrbgInit(255, 110, 199);
+static ColorRange const pinkRange = {CrbgInit(255, 110, 199), CrbgInit(26, 11, 20)};
 // static ColorRange const forest = {CrbgInit(57, 255, 20), CrbgInit(6, 26, 2)};
 static ColorRange const forest = {CrbgInit(0x49, 0xE2, 0x0E), CrbgInit(0x55, 0x10, 0x33)};
 static ColorRange const ocean = {CrbgInit(0, 180, 255), CrbgInit(0, 18, 26)};
@@ -105,41 +133,22 @@ static unsigned long nextChange;
 // static Hilight hilight;
 
 
-static LedUtils::Array<CRGB> all1(leds, 132);
-static LedUtils::Array<CRGB> all2(leds + 132, 128);
+static LedUtils::LedArray all1(leds, 132);
+static LedUtils::LedArray all2(leds + 132, 128);
 
-static LedUtils::Array<CRGB> btm1(leds, 42);
-static LedUtils::Array<CRGB> right1(leds + 42, 24);
-static LedUtils::Array<CRGB> top1(leds + 66, 42);
-static LedUtils::Array<CRGB> left1(leds + 108, 24);
-static LedUtils::Array<CRGB> btm2(leds + 132, 41);
-static LedUtils::Array<CRGB> right2(leds + 173, 23);
-static LedUtils::Array<CRGB> top2(leds + 196, 41);
-static LedUtils::Array<CRGB> left2(leds + 237, 23);
+static LedUtils::LedArray btm1(leds, 42);
+static LedUtils::LedArray right1(leds + 42, 24);
+static LedUtils::LedArray top1(leds + 66, 42);
+static LedUtils::LedArray left1(leds + 108, 24);
+static LedUtils::LedArray btm2(leds + 132, 41);
+static LedUtils::LedArray right2(leds + 173, 23);
+static LedUtils::LedArray top2(leds + 196, 41);
+static LedUtils::LedArray left2(leds + 237, 23);
 
-static LedUtils::Array<CRGB> *upperRowPtrs[] = {&btm1, &right1, &top1, &left1};
-static LedUtils::LoopingMultiArray<CRGB> upperRow(upperRowPtrs, sizeof(upperRowPtrs)/sizeof(upperRowPtrs[0]));
+static LedUtils::LedArray *upperRowPtrs[] = {&btm1, &right1, &top1, &left1};
+static LedUtils::LoopingMultiLedArray upperRow(upperRowPtrs, sizeof(upperRowPtrs)/sizeof(upperRowPtrs[0]));
 
 
-
-//  * * * * * * * * * .. * * * * * * * * *  <-- top1 (42)
-//   * * * * * * * * *..* * * * * * * * *   <-- top2 (41)
-//  *                                    *
-//   *                                  *
-//  *                                    *
-//   *                                  *
-//  *                                    *
-//   *                                  *
-//  .. <-- left1 (24)  right2 (23) -->  ..
-//  ..  <-- left2 (23)                  .. <-- right1 (24)
-//   *                                  *
-//  *                                    *
-//   *                                  *
-//  *                                    *
-//   *                                  *
-//  *                                    *
-//   * * * * * * * * *..* * * * * * * * *   <-- btm2 (41)
-//  * * * * * * * * * .. * * * * * * * * *  <-- btm1 (42)
 
 
 union SplitShort {
@@ -210,7 +219,16 @@ void setup()
 	// 	Serial.print(squaredVal[i]);
 	// }
 
-	slideAll(CRGB::Black, SemiMagenta, 100);
+	int idx = 0;
+	while (1)
+	{
+		for (auto it = upperRow.begin(); it != upperRow.end(); ++it)
+		{
+			*it = pink;
+			FastLED.show();
+			*it = black;
+		}
+	}
 
 	delay(1000);
 }
@@ -356,44 +374,45 @@ void raiseNose2(CRGB const &start, CRGB const &end, int steps)
 }
 
 
-template <typename IT>
-class GlowWorm {
-public:
-	GlowWorm(uint8_t size, CRGB const &startCol, CRGB const &endCol, IT const &startPos, IT const &endPos) : 
-		size_(size), startCol_(startCol), endCol_(endCol), startPos_(startPos), endPos_(endPos), currPos_(startPos)
-	{}
-	void placement() {
-		IT it = currPos_;
-		slide_.init(startCol_, endCol_, size_);
-		for (uint8_t i=0; i<size_; ++i) {
-			slide_.toCrgbRaw(*it);
-			++slide_;
-			if (++it == endPos_) {
-				break;
-			}
-		}
-	}
-	bool advance() {
-		bool const ret = ++currPos_ != endPos_;
-		if (!ret) {
-			currPos_ = startPos_;
-		}
-		return ret;
-	}
-private:
-	uint8_t const size_;
-	LedSlide slide_;
-	CRGB const startCol_;
-	CRGB const endCol_;
-	IT const startPos_;
-	IT const endPos_;
-	IT currPos_;
-};
+// template <typename IT>
+// class GlowWorm {
+// public:
+// 	GlowWorm(uint8_t size, CRGB const &startCol, CRGB const &endCol, IT const &startPos, IT const &endPos) : 
+// 		size_(size), startCol_(startCol), endCol_(endCol), startPos_(startPos), endPos_(endPos), currPos_(startPos)
+// 	{}
+// 	void placement() {
+// 		IT it = currPos_;
+// 		slide_.init(startCol_, endCol_, size_);
+// 		for (uint8_t i=0; i<size_; ++i) {
+// 			slide_.toCrgbRaw(*it);
+// 			++slide_;
+// 			if (++it == endPos_) {
+// 				break;
+// 			}
+// 		}
+// 	}
+// 	bool advance() {
+// 		bool const ret = ++currPos_ != endPos_;
+// 		if (!ret) {
+// 			currPos_ = startPos_;
+// 		}
+// 		return ret;
+// 	}
+// private:
+// 	uint8_t const size_;
+// 	LedSlide slide_;
+// 	CRGB const startCol_;
+// 	CRGB const endCol_;
+// 	IT const startPos_;
+// 	IT const endPos_;
+// 	IT currPos_;
+// };
 
 
 
 void loop()
 {
+	// slideAll(&pink, &black, 20);
 	// while (1) {
 	// 	GlowWorm<LedUtils::ForwardIterator<CRGB>> glowWorms[4] = {{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},
 	// 		{12, SemiMagenta, CRGB::Magenta, all1.begin(), all1.end()},

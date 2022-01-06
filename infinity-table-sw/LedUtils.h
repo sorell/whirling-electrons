@@ -106,6 +106,8 @@ public:
 };
 
 
+typedef Array<CRGB> LedArray;
+
 
 template <typename T>
 class LoopingMultiArray
@@ -145,6 +147,8 @@ private:
 	int const nArrays_;
 };
 
+
+typedef LoopingMultiArray<CRGB> LoopingMultiLedArray;
 
 
 class SquaredVal {
