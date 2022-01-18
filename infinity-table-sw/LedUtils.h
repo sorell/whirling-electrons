@@ -10,6 +10,21 @@ class CRBG;
 
 namespace LedUtils {
 
+union TwoBytes
+{
+	TwoBytes(uint16_t i) : val(i) {}
+
+	static TwoBytes fromColor(uint8_t i) { return TwoBytes((uint16_t)i << 8); }
+
+	uint16_t val;
+	struct
+	{
+		uint8_t l;
+		uint8_t h;
+	};
+};
+
+
 //
 // An abstract base class for Iterator traversing (f.ex) CRGBs in LedArray.
 //
@@ -36,6 +51,9 @@ template <typename T>
 class ForwardIterator : public IteratorBase<T> {
 public:
 	ForwardIterator(typename T::ptr_type p) : IteratorBase<T>(p) {}
+
+	ForwardIterator &operator = (ForwardIterator const &rhs) { IteratorBase<T>::p_ = rhs.p_; return *this; }
+
 	ForwardIterator &operator ++ () { IteratorBase<T>::p_++; return *this; }
 	ForwardIterator &operator -- () { IteratorBase<T>::p_--; return *this; }
 };
@@ -59,31 +77,6 @@ public:
 // in the sw, holding only the begin and end points, whose inheriting classes provide means to iterate
 // between them.
 //
-template <typename T>
-class ArrayBase
-{
-public:
-	typedef T value_type;
-	typedef T *ptr_type;
-
-	// Call function f for each item between begin_ and end_.
-	template <typename F>
-	void forEach(F f) 
-	{ 
-		for (ptr_type p = begin_; p != end_; ++p) { f(*p); }
-	}
-
-	int length(void) const
-	{
-		return end_ - begin_;
-	}
-
-protected:
-	ArrayBase(ptr_type begin, ptr_type end) : begin_(begin), end_(end) {}
-
-	ptr_type const begin_;
-	ptr_type const end_;
-};
 
 
 //
@@ -94,81 +87,49 @@ protected:
 // iterator's ++-operator advances from left to right.
 //
 template <typename T>
-class Array : public ArrayBase<T>
+class Array
 {
 public:
-	Array(T *begin, int amount) : ArrayBase<T>(begin, begin + amount) {}
-
+	typedef T value_type;
+	typedef T *ptr_type;
 	typedef ForwardIterator<Array<T>> iterator;
 	typedef ReverseIterator<Array<T>> r_iterator;
 
-	iterator begin() { return iterator(ArrayBase<T>::begin_); }
-	iterator end() { return iterator(ArrayBase<T>::end_); }
-	r_iterator r_begin() { return r_iterator(ArrayBase<T>::end_-1); }
-	r_iterator r_end() { return r_iterator(ArrayBase<T>::begin_-1); }
+	Array(ptr_type begin, int amount) : begin_(begin), end_(begin + amount) {}
 
-	iterator at(int idx) { return iterator(ArrayBase<T>::begin_ + idx); }
-	r_iterator r_at(int idx) { return r_iterator(ArrayBase<T>::end_ - idx - 1); }
+	int length() const { return end_ - begin_; }
+	int tailRoom(int const from) const { return length() - from; }
+
+	int normalizedPos(int pos) const { return pos % length(); }
+
+	iterator begin() { return iterator(begin_); }
+	iterator end() { return iterator(end_); }
+	r_iterator r_begin() { return r_iterator(end_-1); }
+	r_iterator r_end() { return r_iterator(begin_-1); }
+
+	iterator at(int pos) { return iterator(begin_ + pos); }
+	r_iterator r_at(int pos) { return r_iterator(end_ - pos - 1); }
+
+	iterator next(iterator it) { return ++it != end() ? it : begin(); }
+	iterator prev(iterator it) { return it == begin() ? --end() : --it; }
+	r_iterator next(r_iterator it) { return ++it != r_end() ? it : r_begin(); }
+	r_iterator prev(r_iterator it) { return it == r_begin() ? --r_end() : --it; }
+
+	// Call function f for each item between begin_ and end_.
+	template <typename F>
+	void forEach(F f) const
+	{ 
+		for (ptr_type p = begin_; p != end_; ++p) { f(*p); }
+	}
+
+protected:
+	ptr_type const begin_;
+	ptr_type const end_;
 };
 
 
 typedef Array<CRGB> LedArray;
 
-
-template <typename T>
-class LoopingMultiArray
-{
-public:
-	LoopingMultiArray(Array<T> *const *arrays, int nArrays) : arrays_(arrays), nArrays_(nArrays) {}
-
-	typedef T value_type;
-	typedef int ptr_type;
-
-	template <typename F>
-	void forEach(F f)
-	{
-		for (int arrayIdx = 0; arrayIdx < nArrays_; ++arrayIdx)
-			arrays_[arrayIdx]->forEach(f);
-	}
-
-	template <typename F>
-	void forRange(F f, int begin, int amount)
-	{
-		int arrayIdx = 0;
-		while (begin >= arrays_[arrayIdx]->length())
-		{
-			if (++arrayIdx >= nArrays_)
-				arrayIdx = 0;
-		}
-
-		while (amount > 0)
-		{
-			for (auto it = arrays_[arrayIdx]->at(begin); it != arrays_[arrayIdx]->end() && amount; ++it, --amount)
-				f(*it);
-
-			if (++arrayIdx >= nArrays_)
-				arrayIdx = 0;
-		}
-	}
-
-	// typedef ForwardIterator<LoopingMultiArray<T>> iterator;
-	// typedef ReverseIterator<LoopingMultiArray<T>> r_iterator;
-
-	// iterator begin() { return iterator(arrays_); }
-	// iterator end() { return iterator(ArrayBase<T>::end_); }
-	// r_iterator r_begin() { return r_iterator(ArrayBase<T>::end_-1); }
-	// r_iterator r_end() { return r_iterator(arrays_-1); }
-
-	// iterator at(int idx) { return iterator(arrays_ + idx); }
-	// r_iterator r_at(int idx) { return r_iterator(ArrayBase<T>::end_ - idx - 1); }
-
-private:
-	Array<T> *const *const arrays_;
-	int const nArrays_;
-};
-
-
-typedef LoopingMultiArray<CRGB> LoopingMultiLedArray;
 
 
 class SquaredVal {
