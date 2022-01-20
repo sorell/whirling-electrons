@@ -1,12 +1,6 @@
 #ifndef _SS_LED_ITER_H
 #define _SS_LED_ITER_H
 
-#include <FastLED.h>
-
-
-//
-// Led type defined in FastLED library.
-//
 struct CRGB;
 
 

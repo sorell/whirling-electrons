@@ -1,7 +1,9 @@
+#include <FastLED.h>
 #include "LedUtils.h"
 
 #define DATA_PIN 9
 #define MAX_BRIGHT 255
+
 
 /*----- Facts -----------------------------------------------------------------
  * - There are 260 leds in the table, in two rows.
@@ -65,16 +67,14 @@ static LedUtils::LedArray left2(leds + 237, 23);
 static LedUtils::SquaredVal const squaredVal;
 
 
-/*----- Helper function -------------------------------------------------------
+/*----- Helper functions ------------------------------------------------------
  * Does:
  *   Library CRGB class initialization helper to set TwoBytes upper bytes to
  *   the actual color.
  *----------------------------------------------------------------------------*/
-static inline CRGB CrgbInit(LedUtils::TwoBytes const &red, LedUtils::TwoBytes const &green, LedUtils::TwoBytes const &blue)
+static inline CRGB CrgbInit(uint8_t const red, uint8_t const green, uint8_t const blue)
 {
-	return {.red = red.h,
-		.green = green.h,
-		.blue = blue.h};
+	return {.r = red, .g = green, .b = blue};
 }
 
 
@@ -134,7 +134,7 @@ public:
 		b_(LedUtils::TwoBytes::fromColor(from.blue))
 		{}
 
-	CRGB toCrgb() const { return CrgbInit(r_, g_, b_); }
+	CRGB toCrgb() const { return { .r = r_.h, .g = g_.h, .b = b_.h }; }
 
 	/*----- Function --------------------------------------------------------------
 	 * Does:
@@ -152,8 +152,6 @@ private:
 	LedUtils::TwoBytes g_;
 	LedUtils::TwoBytes b_;
 };
-
-
 
 
 // Warning: apparently there is no move ctor defined for CRGB
@@ -263,7 +261,7 @@ static inline void fillColorTransformation_cw(LedUtils::LedArray &array, CRGB co
 
 
 //----- Predetermined colors --------------------------------------------------
-static CRGB const black = {.red = 0, .green = 0, .blue = 0};
+static CRGB const black = CrgbInit(0, 0, 0);
 static CRGB const pink = CrgbInit(255, 20, 147);
 static CRGB const forest = CrgbInit(57, 255, 20);
 static CRGB const ocean = CrgbInit(0, 180, 255);
