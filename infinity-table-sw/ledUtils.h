@@ -4,7 +4,31 @@
 struct CRGB;
 
 
-namespace LedUtils {
+/*----- Class -----------------------------------------------------------------
+ * Accurate delta values for R,G,B calculated from difference of two colors and
+ * divided for equal steps.
+ * The delta accuracy is 1/128 of a pixel color accuracy.
+ *----------------------------------------------------------------------------*/
+class ColorDelta
+{
+public:
+	ColorDelta(CRGB const from, CRGB const to, int const steps)
+	{
+		init(from, to, steps);
+	}
+	
+	void init(CRGB const beginColor, CRGB const endColor, int const steps);
+
+	int16_t r() const { return r_; }
+	int16_t g() const { return g_; }
+	int16_t b() const { return b_; }
+
+private:
+	int16_t r_;
+	int16_t g_;
+	int16_t b_;
+};
+
 
 union TwoBytes
 {
@@ -24,6 +48,40 @@ union TwoBytes
 #endif
 	};
 };
+
+
+/*----- Class -----------------------------------------------------------------
+ * R,G,B values of a color containing also fractions part. The upper byte is
+ * used as CRGB value and lower byte is fractions used for accurate increments.
+ *----------------------------------------------------------------------------*/
+class AccurateColor
+{
+public:
+	AccurateColor(CRGB const &from) : 
+		r_(TwoBytes::fromColor(from.red)),
+		g_(TwoBytes::fromColor(from.green)),
+		b_(TwoBytes::fromColor(from.blue))
+		{}
+
+	CRGB toCrgb() const { return { .r = r_.h, .g = g_.h, .b = b_.h }; }
+
+	/*----- Function --------------------------------------------------------------
+	 * Does:
+	 *   Add delta to the fraction part of R,G,B values.
+	 *----------------------------------------------------------------------------*/
+	void add(ColorDelta const &delta)
+	{
+		r_.val += delta.r();
+		g_.val += delta.g();
+		b_.val += delta.b();
+	}
+
+private:
+	TwoBytes r_;
+	TwoBytes g_;
+	TwoBytes b_;
+};
+
 
 
 //
@@ -153,8 +211,5 @@ public:
 private:
 	uint8_t values[256];
 };
-
-
-}  // namespace LedUtils
 
 #endif  // _SS_LED_ITER_H
