@@ -7,6 +7,31 @@ struct CRGB;
 #include "ledUtils.h"
 
 
+template <typename F>
+void fillRange(LedArray &array, F const atFunc, CRGB const &color, int const pos = 0, int amount = -1)
+{
+	if (amount < 0)
+		amount = array.length();
+
+	for (auto it = atFunc(pos); amount > 0; --amount) {
+		*it = color;
+		it = array.next(it);
+	}
+}
+
+
+inline void fillRange_ccw(LedArray &array, CRGB const &color, int pos = 0, int amount = -1)
+{
+	fillRange(array, [&](int p){ return array.at(p);}, color, pos, amount);
+}
+
+
+inline void fillRange_cw(LedArray &array, CRGB const &color, int pos = 0, int amount = -1)
+{
+	fillRange(array, [&](int p){ return array.r_at(p);}, color, pos, amount);
+}
+
+
 /*----- Function --------------------------------------------------------------
  * Does:
  *   Create a trail of colors gradually shifting from a color to another over

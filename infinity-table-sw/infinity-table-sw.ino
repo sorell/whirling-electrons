@@ -1,6 +1,7 @@
 #include <FastLED.h>
 #include "ledUtils.h"
 #include "algorithms.h"
+#include "debug.h"
 
 #define DATA_PIN 9
 #define MAX_BRIGHT 255
@@ -78,6 +79,18 @@ static inline CRGB CrgbInit(uint8_t const red, uint8_t const green, uint8_t cons
 	return {.r = red, .g = green, .b = blue};
 }
 
+static inline CRGB CrgbInit(uint16_t const red, uint16_t const green, uint16_t const blue, int const scale)
+{
+	CRGB crgb {.r = (uint8_t)(red * scale / 100), 
+		.g = (uint8_t)(green * scale / 100), 
+		.b = (uint8_t)(blue * scale / 100)};
+	Serial.print("scale = ");
+	Serial.print(scale);
+	Serial.print(": ");
+	print(crgb);
+	return crgb;
+}
+
 
 // Warning: apparently there is no move ctor defined for CRGB
 CRGB squareTo(uint8_t const r, uint8_t const g, uint8_t const b)
@@ -101,9 +114,32 @@ void setup()
 
 	FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);
 
-	all1.forEach([&](CRGB &led) { led = black; });
-	all2.forEach([&](CRGB &led) { led = black; });
+	all1.forEach([](CRGB &led) { led = black; });
+	all2.forEach([](CRGB &led) { led = black; });
 	FastLED.show();
+
+	int scale = 1;
+	while (1) {
+		CRGB const blue2 = CrgbInit(0, 0, 100, 20);
+		CRGB const autumn2 = CrgbInit(255, 255, 0, 20);
+		CRGB const pink1 = CrgbInit(255, 20, 147, scale * 10);
+		fillColorTransformation_cw(top1, black, pink1, 0, 30);
+		
+		// auto it = top1.begin();
+		// for (int i=0; i<10; ++i) {
+		// 	*it = i >= scale / 10 ? black : (i+1) % 5 == 0 ? autumn2 : blue2;
+		// 	++it;
+		// }
+		fillRange_ccw(top1, blue2, 0, scale);
+		fillRange_ccw(top1, black, scale, 10 - scale);
+
+		FastLED.show();
+
+		if (++scale > 10)
+			scale = 0;
+
+		delay(300);
+	}
 }
 
 
@@ -111,7 +147,7 @@ void loop()
 {
 	CRGB const allColors[] = {pink, ocean, forest, autumn};
 	int constexpr totalColors = sizeof(allColors) / sizeof(allColors[0]);
-	unsigned long constexpr recolorSpan = 5000000;
+	unsigned long constexpr recolorSpan = 5000;
 	int colorIdx = 1;
 	int pos1 = 0;
 	CRGB currentColor = allColors[0];
