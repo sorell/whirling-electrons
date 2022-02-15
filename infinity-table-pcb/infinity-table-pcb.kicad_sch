@@ -1824,7 +1824,7 @@
     (pin "4" (uuid 21a421c3-8bc2-4254-9076-b7e3801bc26f))
   )
 
-  (symbol (lib_id "Device:R_Potentiometer") (at 96.52 130.81 0) (mirror x) (unit 1)
+  (symbol (lib_id "Device:R_Potentiometer") (at 96.52 130.81 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 83abc281-50cb-48bb-8e44-6469265be44c)
     (property "Reference" "RV1" (id 0) (at 93.98 129.5399 0)
@@ -1833,7 +1833,7 @@
     (property "Value" "R_Potentiometer" (id 1) (at 93.98 132.0799 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" (id 2) (at 96.52 130.81 0)
+    (property "Footprint" "kicad-ss-libs:Potentiometer Thruhole" (id 2) (at 96.52 130.81 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 96.52 130.81 0)
@@ -2200,7 +2200,7 @@
       (reference "R1") (unit 1) (value "R") (footprint "Resistor_SMD:R_0805_2012Metric")
     )
     (path "/83abc281-50cb-48bb-8e44-6469265be44c"
-      (reference "RV1") (unit 1) (value "R_Potentiometer") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+      (reference "RV1") (unit 1) (value "R_Potentiometer") (footprint "kicad-ss-libs:Potentiometer Thruhole")
     )
     (path "/830a7ed6-ee6e-4930-b0e3-7063f8168620"
       (reference "SW1") (unit 1) (value "SW_Push_Dual") (footprint "kicad-ss-libs:Push Button 12x12mm")
