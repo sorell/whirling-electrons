@@ -859,6 +859,9 @@
   (gr_line (start 153.67 78.74) (end 153.67 113.538) (layer "Edge.Cuts") (width 0.15) (tstamp 182b2d54-931d-49d6-9f39-60a752623e36))
   (gr_line (start 66.04 113.538) (end 66.04 78.74) (layer "Edge.Cuts") (width 0.15) (tstamp a17904b9-135e-4dae-ae20-401c7787de72))
   (gr_line (start 153.67 113.538) (end 66.04 113.538) (layer "Edge.Cuts") (width 0.15) (tstamp f202141e-c20d-4cac-b016-06a44f2ecce8))
+  (gr_text "infinity-table v2\nSami Sorell" (at 71.755 90.7542 90) (layer "F.SilkS") (tstamp 2dba072b-3aba-4c6e-8dad-0c854cc5ab37)
+    (effects (font (size 1.5 1.5) (thickness 0.3)))
+  )
 
   (via (at 110.2614 97.8916) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (free) (net 1) (tstamp 000452fe-6dbc-471a-9934-e97eb0a9b3b3))
   (via (at 115.6462 93.9038) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (free) (net 1) (tstamp 00a1baf4-cbf0-4429-905d-a8ccfe596ad8))
