@@ -3,7 +3,7 @@
 | Component     | € / 1 pcs | pcs | Link | Datasheet | Comment |
 |---------------|-----------|-----|------|-----------|---------|
 | Mega 2560 Pro | 22,2      | 1   | [link](https://www.aliexpress.com/item/32833214300.html) | - | Mcu 5V 7-12V IO:54+16 |
-| FDN337N       | 0,31      | 42  | [link](https://www.triopak.fi/fi/tuote/FDN337N) | - | Mos N-Fet 30V 2,2A 65mohms, SOT-23 |
+| FDN337N       | 0,31      | 42  | [link](https://www.triopak.fi/fi/tuote/FDN337N) | [link](https://www.triopak.fi/files/product/Fairchild/FDN337N_eng_datasheet.pdf) | Mos N-Fet 30V 2,2A 65mohms, SOT-23 |
 | Led strip     | 7,59      | 3   | [link](https://www.aliexpress.com/item/32903257649.html) | - | RGB LED strip, 5m, smd 5050 |
 | 3386P503      | 0,36      | 1   | [link](https://www.triopak.fi/fi/tuote/3386P503) | - | Trimmer potentiometer, 50 kOhm
 | xxxxxxx       |           |     |   |   |   |
@@ -17,7 +17,7 @@
 
 ## Mega 2560 PRO
 
-https://www.aliexpress.com/item/32833214300.html?spm=a2g0o.placeorder.0.0.2aed321ex0vOOl&mp=1
+https://www.aliexpress.com/item/32833214300.html
 
 Howto: https://wiki.keyestudio.com/KS0502_Keyestudio_MEGA_2560_PRO_Development_Board(Black_and_Eco-friendly)
 
