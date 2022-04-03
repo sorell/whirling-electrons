@@ -13,6 +13,20 @@
 
 14 x 3 FET driven PWM controlled LED power lines
 
+## Current consumption
+
+The leds come in 5 m strips and have 3 separate colors.
+
+Measured current consumption for unopened reel after temperature rise has stopped:
+Blue: 1,29 A
+Red: 1,33 A
+Green: 1,12 A 
+-> Total current = 3,74 A / 5 m = **0,748 A/m**.
+
+We want the board to be able to drive up to **14 meters** of led strip, so this gives the **maximum current of 10,472 A**. At [PCBWay](https://www.pcbway.com) the price of a board increases more than eightfold when going from 1 oz to 2 oz copper thickness, so we want to try to design a board with 1 oz thickness. We can place the led connectors on both sides of the board, so the maximum **current per side is 5,236 A**. Pcb industry counter-intuitively uses a unit of volume to measure thickness, which derives from oz per area of one square feet. 
+
+For a pcb with copper thickness of 1 oz, allowed temperature rise of 10 C and trace length of 10 cm a [PCB trace width calculator](https://www.4pcb.com/trace-width-calculator.html) gives trace width **7,6 mm, or 300 mils**. We can live with that. The maximum current for a single color per 1 m is then 1,33 A / 5 m = 0,266 A -> trace width for the outputs is **0,126 mm, or 4,95 mils**. I think we can be generous and make them wider.
+
 # Sourcing
 
 ## Mega 2560 PRO
