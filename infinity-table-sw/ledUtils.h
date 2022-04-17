@@ -12,6 +12,9 @@ struct CRGB;
 class ColorDelta
 {
 public:
+	ColorDelta() : r_(0), g_(0), b_(0)
+	{}
+	
 	ColorDelta(CRGB const from, CRGB const to, int const steps)
 	{
 		init(from, to, steps);
@@ -32,11 +35,11 @@ private:
 
 union TwoBytes
 {
-	TwoBytes(uint16_t i) : val(i) {}
+	TwoBytes(uint16_t value) : raw(value) {}
 
-	static TwoBytes fromColor(uint8_t i) { return TwoBytes((uint16_t)i << 8); }
+	static TwoBytes fromColor(uint8_t value) { return TwoBytes((uint16_t)value << 8); }
 
-	uint16_t val;
+	uint16_t raw;
 	struct
 	{
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -57,11 +60,14 @@ union TwoBytes
 class AccurateColor
 {
 public:
+	AccurateColor() : r_(0), g_(0), b_(0)
+	{}
+
 	AccurateColor(CRGB const &from) : 
 		r_(TwoBytes::fromColor(from.red)),
 		g_(TwoBytes::fromColor(from.green)),
 		b_(TwoBytes::fromColor(from.blue))
-		{}
+	{}
 
 	CRGB toCrgb() const { return { .r = r_.h, .g = g_.h, .b = b_.h }; }
 
@@ -71,17 +77,28 @@ public:
 	 *----------------------------------------------------------------------------*/
 	void add(ColorDelta const &delta)
 	{
-		r_.val += delta.r();
-		g_.val += delta.g();
-		b_.val += delta.b();
+		r_.raw += delta.r();
+		g_.raw += delta.g();
+		b_.raw += delta.b();
 	}
+
+	AccurateColor &scale(int const fractions)
+	{
+		r_.raw = (((unsigned long) r_.raw) * fractions / 0xFF);
+		g_.raw = (((unsigned long) g_.raw) * fractions / 0xFF);
+		b_.raw = (((unsigned long) b_.raw) * fractions / 0xFF);
+		return *this;
+	}
+
+	TwoBytes const &r() const { return r_; }
+	TwoBytes const &g() const { return g_; }
+	TwoBytes const &b() const { return b_; }
 
 private:
 	TwoBytes r_;
 	TwoBytes g_;
 	TwoBytes b_;
 };
-
 
 
 //
@@ -179,6 +196,14 @@ public:
 	void forEach(F f) const
 	{ 
 		for (ptr_type p = begin_; p != end_; ++p) { f(*p); }
+	}
+
+	// Call function f for each item between begin_ and end_.
+	template <typename F>
+	void forEachIdx(F f) const
+	{ 
+		int idx = 0;
+		for (ptr_type p = begin_; p != end_; ++p, ++idx) { f(*p, idx); }
 	}
 
 protected:

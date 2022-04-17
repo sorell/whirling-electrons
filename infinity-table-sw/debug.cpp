@@ -4,40 +4,50 @@
  * Does:
  *   Print various data types to Arduino Serial.
  *----------------------------------------------------------------------------*/
-void print(CRGB const &rgb, char const prefix[])
+void print(char const prefix[], CRGB const &rgb, int format)
 {
 	Serial.print(prefix);
-	Serial.print(rgb.r);
+	Serial.print(rgb.r, format);
 	Serial.print(",");
-	Serial.print(rgb.g);
+	Serial.print(rgb.g, format);
 	Serial.print(",");
-	Serial.println(rgb.b);
+	Serial.println(rgb.b, format);
 }
 
-void print(TwoBytes const &tb, char const prefix[])
+void print(char const prefix[], TwoBytes const &tb, int format)
 {
 	Serial.print(prefix);
-	Serial.print(tb.l);
+	Serial.print(tb.l, format);
 	Serial.print(",");
-	Serial.println(tb.h);
+	Serial.println(tb.h, format);
 }
 
-void print(ColorDelta const &delta, char const prefix[])
+void print(char const prefix[], ColorDelta const &delta, int format)
 {
 	Serial.print(prefix);
-	Serial.print(delta.r());
+	Serial.print(delta.r(), format);
 	Serial.print(",");
-	Serial.print(delta.g());
+	Serial.print(delta.g(), format);
 	Serial.print(",");
-	Serial.println(delta.b());
+	Serial.println(delta.b(), format);
 }
 
-void print(int n0, int n1, int n2, char const prefix[])
+void print(char const prefix[], AccurateColor const &color, int format)
 {
 	Serial.print(prefix);
-	Serial.print(n0);
+	Serial.print(color.r().raw, format);
 	Serial.print(",");
-	Serial.print(n1);
+	Serial.print(color.g().raw, format);
 	Serial.print(",");
-	Serial.println(n2);
+	Serial.println(color.b().raw, format);
+}
+
+void print(char const prefix[], int n0, int n1, int n2, int format)
+{
+	Serial.print(prefix);
+	Serial.print(n0, format);
+	Serial.print(",");
+	Serial.print(n1, format);
+	Serial.print(",");
+	Serial.println(n2, format);
 }

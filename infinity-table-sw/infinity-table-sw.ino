@@ -1,10 +1,13 @@
 #include <FastLED.h>
 #include "ledUtils.h"
 #include "algorithms.h"
+#include "time.h"
 #include "debug.h"
 
-#define DATA_PIN 9
-#define MAX_BRIGHT 255
+#define LED_DATA_OUT 2
+#define SWITCH1_IN 3
+#define SWITCH2_IN 4
+#define POTENTIOMETER_IN 7
 
 
 /*----- Facts -----------------------------------------------------------------
@@ -66,122 +69,335 @@ static LedArray top2(leds + 196, 41);
 static LedArray left2(leds + 237, 23);
 
 
-static SquaredVal const squaredVal;
+// static SquaredVal const squaredVal;
 
 
-/*----- Helper functions ------------------------------------------------------
+/*----- Function --------------------------------------------------------------
  * Does:
- *   Library CRGB class initialization helper to set TwoBytes upper bytes to
- *   the actual color.
+ *   Read the status of switch 1.
+ *
+ * Gives:
+ *   != 0 when a switch press was detected.
  *----------------------------------------------------------------------------*/
-static inline CRGB CrgbInit(uint8_t const red, uint8_t const green, uint8_t const blue)
+static inline int switch1Pressed(void)
 {
-	return {.r = red, .g = green, .b = blue};
-}
+	static uint8_t prevState = 1;
+	uint8_t const state = digitalRead(SWITCH1_IN);
+	int const ret = prevState && !state;
 
-static inline CRGB CrgbInit(uint16_t const red, uint16_t const green, uint16_t const blue, int const scale)
-{
-	CRGB crgb {.r = (uint8_t)(red * scale / 100), 
-		.g = (uint8_t)(green * scale / 100), 
-		.b = (uint8_t)(blue * scale / 100)};
-	Serial.print("scale = ");
-	Serial.print(scale);
-	Serial.print(": ");
-	print(crgb);
-	return crgb;
+	prevState = state;
+	return ret;
 }
 
 
-// Warning: apparently there is no move ctor defined for CRGB
-CRGB squareTo(uint8_t const r, uint8_t const g, uint8_t const b)
+/*----- Function --------------------------------------------------------------
+ * Does:
+ *   Read the status of switch 1.
+ *
+ * Gives:
+ *   != 0 when a switch press was detected.
+ *----------------------------------------------------------------------------*/
+static inline int switch2Pressed(void)
 {
-	return CRGB(squaredVal[r], squaredVal[g], squaredVal[b]);
+	static uint8_t prevState = 1;
+	uint8_t const state = digitalRead(SWITCH2_IN);
+	int const ret = prevState && !state;
+
+	prevState = state;
+	return ret;
 }
+
+
+/*----- Function --------------------------------------------------------------
+ * Does:
+ *   Read the position of the dial (potentiometer).
+ *
+ * Gives:
+ *   A value from 0 to 255.
+ *----------------------------------------------------------------------------*/
+static inline int readDialPosition(void)
+{
+	return analogRead(POTENTIOMETER_IN) >> 2;
+}
+
+
+
+// CRGB squareTo(uint8_t const r, uint8_t const g, uint8_t const b)
+// {
+// 	// Warning: apparently there is no move ctor defined for CRGB
+// 	return CRGB(squaredVal[r], squaredVal[g], squaredVal[b]);
+// }
 
 
 //----- Predetermined colors --------------------------------------------------
-static CRGB const black = CrgbInit(0, 0, 0);
-static CRGB const pink = CrgbInit(255, 20, 147);
-static CRGB const forest = CrgbInit(57, 255, 20);
-static CRGB const ocean = CrgbInit(0, 180, 255);
-static CRGB const autumn = CrgbInit(255, 255, 0);
+static CRGB const black = CRGB(0x00, 0x00, 0x00);
+static CRGB const red = CRGB(0xFF, 0x00, 0x00);
+static CRGB const orange = CRGB(0xFF, 0x2E, 0x00);
+static CRGB const green = CRGB(0x00, 0x80, 0x00);
+static CRGB const blue = CRGB(0x00, 0x00, 0xFF);
+static CRGB const pink = CRGB(0xFF, 0x14, 0x93);
+static CRGB const forest = CRGB(0x39, 0xFF, 0x14);
+// static CRGB const indigo = CRGB(0x4B, 0x00, 0x82);
+static CRGB const indigo = CRGB(0x2A, 0x0D, 0x5D);
+static CRGB const ocean = CRGB(0x00, 0xB4, 0xFF);
+static CRGB const yellow = CRGB(0xFF, 0xD7, 0x00);
+static CRGB const violet = CRGB(0xEE, 0x82, 0xEE);
 
 
 void setup() 
 {
 	Serial.begin(115200);
+
+	pinMode(SWITCH1_IN, INPUT_PULLUP);
+	pinMode(SWITCH2_IN, INPUT_PULLUP);
+
+	FastLED.addLeds<WS2812, LED_DATA_OUT, GRB>(leds, NUM_LEDS);
+
 	Serial.println("It puts dem black");
-
-	FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);
-
 	all1.forEach([](CRGB &led) { led = black; });
 	all2.forEach([](CRGB &led) { led = black; });
 	FastLED.show();
+}
 
-	int scale = 1;
-	while (1) {
-		CRGB const blue2 = CrgbInit(0, 0, 100, 20);
-		CRGB const autumn2 = CrgbInit(255, 255, 0, 20);
-		CRGB const pink1 = CrgbInit(255, 20, 147, scale * 10);
-		fillColorTransformation_cw(top1, black, pink1, 0, 30);
-		
-		// auto it = top1.begin();
-		// for (int i=0; i<10; ++i) {
-		// 	*it = i >= scale / 10 ? black : (i+1) % 5 == 0 ? autumn2 : blue2;
-		// 	++it;
+
+static void ledTrain(void)
+{
+	CRGB const allColors[] = {
+		red,
+		pink,
+		forest,
+		ocean,
+		yellow
+	};
+
+	int constexpr totalColors = sizeof(allColors) / sizeof(allColors[0]);
+	unsigned long constexpr drawInterval = 40;
+	unsigned long constexpr recolorInterval = 5000;
+	int constexpr totalRecolorSteps = 50;
+
+	int colorIdx = 0;
+	int drawStartPos1 = 0;
+	CRGB currentColor = allColors[colorIdx];
+	CRGB nextColor;
+	unsigned long nextDraw = millis();
+	unsigned long nextRecolor = millis() + recolorInterval;
+	int recolorSteps;
+	ColorDelta delta;
+	AccurateColor drawColor = allColors[colorIdx];
+	int automaticSwitchingEnabled = 1;
+	int colorSwitchingInProgress = 0;
+
+	while (!switch1Pressed()) {
+		unsigned long const now = millis();
+
+		if (!automaticSwitchingEnabled) {
+			nextRecolor = now + 1;
+		}
+
+		// if (switch1Pressed()) {
+		// 	nextRecolor = !automaticSwitchingEnabled ? now : now + recolorInterval;
+		// 	automaticSwitchingEnabled = 0;
 		// }
-		fillRange_ccw(top1, blue2, 0, scale);
-		fillRange_ccw(top1, black, scale, 10 - scale);
+		// if (switch2Pressed()) {
+		// 	automaticSwitchingEnabled = 1;
+		// 	nextRecolor = now;
+		// }
 
+		if (!timeIsAfterEq(now, nextDraw))
+			continue;
+
+		nextDraw += drawInterval;
+
+		AccurateColor dimmedColor(drawColor);
+		int const fractions = readDialPosition();
+		dimmedColor.scale(fractions);
+
+		drawStartPos1 = all1.normalizedPos(++drawStartPos1);
+		fillColorTransformation_cw(all1, black, dimmedColor.toCrgb(), drawStartPos1, 130);
+		// fillColorTransformation_cw(all2, black, dimmedColor.toCrgb(), pos1, 127);
+		FastLED.show();
+		
+		if (!colorSwitchingInProgress && timeIsAfterEq(now, nextRecolor)) {
+			nextRecolor += recolorInterval;
+			colorSwitchingInProgress = 1;
+
+			recolorSteps = totalRecolorSteps;
+			currentColor = drawColor.toCrgb();
+
+			if (++colorIdx >= totalColors)
+				colorIdx = 0;
+				
+			nextColor = allColors[colorIdx];
+			delta.init(currentColor, nextColor, totalRecolorSteps);
+		}
+
+		if (colorSwitchingInProgress) {
+			drawColor.add(delta);
+
+			if (--recolorSteps == 0)
+				colorSwitchingInProgress = 0;
+		}
+	}
+}
+
+
+static void ledBreathing(void)
+{
+	CRGB const allColors[] = {
+		red,
+		pink,
+		forest,
+		ocean,
+		yellow
+	};
+
+	int constexpr totalColors = sizeof(allColors) / sizeof(allColors[0]);
+	unsigned long constexpr drawInterval = 25;
+	int constexpr totalRecolorSteps = 100;
+
+	CRGB selectedColors[2] = {operator / (allColors[0], 10), allColors[0]};
+	int selectedColorIdx = 0;
+	unsigned long nextDraw = millis();
+	int drawIdx = 0;
+	int recolorSteps = 0;
+	AccurateColor drawColor;
+	ColorDelta delta;
+
+
+	while (!switch1Pressed()) {
+		unsigned long const now = millis();
+
+		if (switch2Pressed()) {
+			if (++selectedColorIdx >= totalColors)
+				selectedColorIdx = 0;
+
+			selectedColors[0] = operator / (allColors[selectedColorIdx], 10);
+			selectedColors[1] = allColors[selectedColorIdx];
+			recolorSteps = 0;
+			drawIdx = 0;
+		}
+
+		if (!timeIsAfterEq(now, nextDraw))
+			continue;
+
+		nextDraw += drawInterval;
+
+		if (!recolorSteps) {
+			drawColor = selectedColors[drawIdx];
+			delta.init(selectedColors[drawIdx], selectedColors[(drawIdx+1) & 0x1], totalRecolorSteps);
+			drawIdx = (drawIdx + 1) & 0x1;
+			recolorSteps = totalRecolorSteps;
+		}
+
+		int const fractions = readDialPosition();
+		AccurateColor dimmedColor(drawColor);
+		CRGB crgb = dimmedColor.scale(fractions).toCrgb();
+
+		all1.forEach([crgb](CRGB &led) { led = crgb; });
+		all2.forEach([crgb](CRGB &led) { led = crgb; });
 		FastLED.show();
 
-		if (++scale > 10)
-			scale = 0;
+		drawColor.add(delta);
+		--recolorSteps;
+	}
+}
 
-		delay(300);
+
+static void ledRainbow(void)
+{
+	CRGB const allColors[] = {
+		red,
+		orange,
+		yellow,
+		green,
+		blue,
+		indigo,
+		// violet
+	};
+
+	int constexpr totalColors = sizeof(allColors) / sizeof(allColors[0]);
+	unsigned long constexpr drawInterval = 60;
+
+	unsigned long nextDraw = millis();
+	int constexpr animateMax = 255;
+	int constexpr animateMin = 100;
+	int animationScaling[2] = {255, 255};
+	int animateStep[2] = {11, 13};
+	int animateIdx[2];
+
+	while (!switch1Pressed()) {
+		unsigned long const now = millis();
+
+		if (!timeIsAfterEq(now, nextDraw))
+			continue;
+
+		nextDraw += drawInterval;
+
+		for (int i = 0; i < 2; ++i) {
+			animationScaling[i] += animateStep[i];
+			if (animationScaling[i] < animateMin) {
+				animationScaling[i] = animateMin;
+				animateStep[i] *= -1;
+			}
+			else if (animationScaling[i] > animateMax) {
+				animationScaling[i] = animateMax;
+				animateStep[i] *= -1;
+				animateIdx[i] = random(-1, totalColors - 1);
+			}
+		}
+
+		for (int ledArrayIdx = 0; ledArrayIdx < 2; ++ledArrayIdx) {
+			LedArray &topArray = !ledArrayIdx ? top1 : top2;
+			LedArray &btmArray = !ledArrayIdx ? btm1 : btm2;
+			float const ledsPerColor = (float) topArray.length() / (totalColors - 1);
+			float fIdx = 0;
+
+			for (int colorIdx = 0; colorIdx < totalColors - 1; ++colorIdx) {
+				int const beginIdx = (int)fIdx;
+				fIdx += ledsPerColor;
+				int const endIdx = (int)(fIdx + 0.5f);
+
+				AccurateColor beginColor = allColors[colorIdx];
+				AccurateColor endColor = allColors[colorIdx+1];
+				
+				if (colorIdx == animateIdx[ledArrayIdx]) {
+					endColor.scale(animationScaling[ledArrayIdx]);
+				}
+				else if (colorIdx == animateIdx[ledArrayIdx] + 1) {
+					beginColor.scale(animationScaling[ledArrayIdx]);
+				}
+
+
+				fillColorTransformation_cw(topArray, beginColor.toCrgb(), endColor.toCrgb(), beginIdx, endIdx - beginIdx);
+				fillColorTransformation_ccw(btmArray, beginColor.toCrgb(), endColor.toCrgb(), beginIdx, endIdx - beginIdx);
+			}
+		}
+
+		FastLED.show();
 	}
 }
 
 
 void loop()
 {
-	CRGB const allColors[] = {pink, ocean, forest, autumn};
-	int constexpr totalColors = sizeof(allColors) / sizeof(allColors[0]);
-	unsigned long constexpr recolorSpan = 5000;
-	int colorIdx = 1;
-	int pos1 = 0;
-	CRGB currentColor = allColors[0];
-	CRGB nextColor = allColors[1];
-	unsigned long nextRecolor = millis() + recolorSpan;
-	int const totalRecolorSteps = 50;
-	int recolorSteps = totalRecolorSteps;
+	static int mode = 2;
 
-	ColorDelta delta(currentColor, nextColor, totalRecolorSteps);
-	AccurateColor color(currentColor);
-
-	while (1)
-	{
-		pos1 = all1.normalizedPos(++pos1);
-		fillColorTransformation_cw(all1, black, color.toCrgb(), pos1, 130);
-		// fillColorTransformation_cw(all2, black, color.toCrgb(), pos1, 130);
-		FastLED.show();
-		delay(10);
-		if (millis() > nextRecolor) {
-			color.add(delta);
-
-			if (--recolorSteps == 0) {
-				if (++colorIdx >= totalColors)
-					colorIdx = 0;
-				
-				currentColor = nextColor;
-				nextColor = allColors[colorIdx];
-
-				color = currentColor;
-				recolorSteps = totalRecolorSteps;
-				nextRecolor += recolorSpan;
-
-				delta.init(currentColor, nextColor, totalRecolorSteps);
-			}
-		}
+	switch (mode) {
+		default:
+			mode = 0;
+			// Fall through
+		case 0:
+			ledBreathing();
+			break;
+		case 1:
+			ledTrain();
+			break;
+		case 2:
+			ledRainbow();
+			break;
 	}
+
+	++mode;
+	all1.forEach([](CRGB &led) { led = black; });
+	all2.forEach([](CRGB &led) { led = black; });
 }
