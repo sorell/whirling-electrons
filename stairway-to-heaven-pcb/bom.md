@@ -17,7 +17,7 @@
 
 The leds come in 5 m strips and have 3 separate colors.
 
-Measured current consumption for unopened reel after temperature rise has stopped:
+Measured current consumption for an unopened reel after temperature rise has stopped:
 Blue: 1,29 A
 Red: 1,33 A
 Green: 1,12 A 
