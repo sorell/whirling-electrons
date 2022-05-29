@@ -1,6 +1,10 @@
+#ifndef ARDUINO
+
 #include <stdio.h>
 #include <cassert>
 #include "linkedlist.h"
+
+
 
 
 struct TestItem
@@ -47,3 +51,5 @@ int main(void)
 	testAdd();
 	return 0;
 }
+
+#endif

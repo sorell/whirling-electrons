@@ -39,6 +39,20 @@ Howto: https://wiki.keyestudio.com/KS0502_Keyestudio_MEGA_2560_PRO_Development_B
 
 https://store.arduino.cc/collections/boards/products/arduino-mega-2560-rev3
 
+## Photosensor ?
+
+ToS sensor module: https://www.aliexpress.com/item/4000088283170.html
+PIR sensor module: https://www.aliexpress.com/item/1874938103.html
+Phototransistor + IR led?
+
+https://www.probotronix.com/product/pir-motion-sensor-detector-module-hc-sr501/
+
+## Photosensor GP2Y0D21YK
+
+The GP2Y0D21YK is a distance measuring sensor with integrated signal processing and digital output.
+
+[Datasheet](https://media.digikey.com/pdf/Data%20Sheets/Sharp%20PDFs/GP2Y0D21YK.pdf)
+
 ## Switching regulator LM2575T-5
 
 https://www.triopak.fi/fi/tuote/LM2575T-5
@@ -61,14 +75,6 @@ https://www.mouser.fi/datasheet/2/115/DIOD_S_A0011183505_1-2543669.pdf
 https://www.mouser.fi/ProductDetail/Diodes-Incorporated/DMN3135LVT-7?qs=gfe7vQ8txpXcd87ExB4f9Q%3D%3D
 https://www.diodes.com/assets/Datasheets/DMN3135LVT.pdf
 0,385 € / 1 pcs @ 10 pcs
-
-## Photosensor ?
-
-ToS sensor module: https://www.aliexpress.com/item/4000088283170.html
-PIR sensor module: https://www.aliexpress.com/item/1874938103.html
-Phototransistor + IR led?
-
-https://www.probotronix.com/product/pir-motion-sensor-detector-module-hc-sr501/
 
 ## Barrel jack ?
 

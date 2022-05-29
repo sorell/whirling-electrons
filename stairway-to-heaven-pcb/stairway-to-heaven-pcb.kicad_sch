@@ -480,14 +480,14 @@
 
 
   (no_connect (at 120.65 55.88) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 120.65 58.42) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 85.09 63.5) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 85.09 66.04) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 85.09 53.34) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 120.65 48.26) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 120.65 45.72) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 85.09 58.42) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
-  (no_connect (at 85.09 60.96) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619132))
+  (no_connect (at 120.65 58.42) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619133))
+  (no_connect (at 85.09 63.5) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619134))
+  (no_connect (at 85.09 66.04) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619135))
+  (no_connect (at 85.09 53.34) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619136))
+  (no_connect (at 120.65 48.26) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619137))
+  (no_connect (at 120.65 45.72) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619138))
+  (no_connect (at 85.09 58.42) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619139))
+  (no_connect (at 85.09 60.96) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc561913a))
 
   (wire (pts (xy 81.28 101.6) (xy 85.09 101.6))
     (stroke (width 0) (type default) (color 0 0 0 0))

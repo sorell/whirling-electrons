@@ -1,3 +1,5 @@
+#ifndef ARDUINO
+
 #ifndef _SS_LINKEDLIST_H
 #define _SS_LINKEDLIST_H
 
@@ -49,3 +51,4 @@ static inline void ListDel(ListHead *item)
 
 
 #endif  // _SS_LINKEDLIST_H
+#endif  // ARDUINO
