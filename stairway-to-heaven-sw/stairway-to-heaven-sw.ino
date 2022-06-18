@@ -82,6 +82,7 @@ void loop()
 		printf("Led %d, %d, %d; %d\n", led.r, led.g, led.b, rounds);
 	}
 
+	// Wait for the start of the next PWM period
 	while ((micros() & SLICE_BITMASK) != 0);
 
 	rounds = 0;
