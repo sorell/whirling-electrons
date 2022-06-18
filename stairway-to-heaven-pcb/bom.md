@@ -3,7 +3,7 @@
 | Component     | € / 1 pcs | pcs | Link | Datasheet | Comment |
 |---------------|-----------|-----|------|-----------|---------|
 | Mega 2560 Pro | 22,2      | 1   | [link](https://www.aliexpress.com/item/32833214300.html) | [link](https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/ATmega640-1280-1281-2560-2561-Datasheet-DS40002211A.pdf) | Mcu 5V 7-9V IO:54+16 |
-| LM2576T-ADJG  | 2,73      | 1   | [link](https://www.triopak.fi/fi/tuote/LM2576T-ADJG) | [link](https://www.onsemi.com/pdf/datasheet/lm2576-d.pdf) | Adjustable switching regulator |
+| LM2576T-ADJG  | 2,73      | 1   | [link](https://www.triopak.fi/fi/tuote/LM2575T-5) | [link](https://www.ti.com/lit/ds/symlink/lm2575-n.pdf) | Step-Down Voltage Regulator 5V |
 | FDN337N       | 0,31      | 42  | [link](https://www.triopak.fi/fi/tuote/FDN337N) | [link](https://www.triopak.fi/files/product/Fairchild/FDN337N_eng_datasheet.pdf) | Mos N-Fet 30V 2,2A 65mohms, SOT-23 |
 | Led strip     | 7,59      | 3   | [link](https://www.aliexpress.com/item/32903257649.html) | - | RGB LED strip, 5m, smd 5050 |
 | 3386P503      | 0,36      | 1   | [link](https://www.triopak.fi/fi/tuote/3386P503) | - | Trimmer potentiometer, 50 kOhm

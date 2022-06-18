@@ -384,11 +384,11 @@
         )
       )
     )
-    (symbol "power:+8V" (power) (pin_names (offset 0)) (in_bom yes) (on_board yes)
+    (symbol "power:+5V" (power) (pin_names (offset 0)) (in_bom yes) (on_board yes)
       (property "Reference" "#PWR" (id 0) (at 0 -3.81 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "Value" "+8V" (id 1) (at 0 3.556 0)
+      (property "Value" "+5V" (id 1) (at 0 3.556 0)
         (effects (font (size 1.27 1.27)))
       )
       (property "Footprint" "" (id 2) (at 0 0 0)
@@ -400,10 +400,10 @@
       (property "ki_keywords" "power-flag" (id 4) (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_description" "Power symbol creates a global label with name \"+8V\"" (id 5) (at 0 0 0)
+      (property "ki_description" "Power symbol creates a global label with name \"+5V\"" (id 5) (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (symbol "+8V_0_1"
+      (symbol "+5V_0_1"
         (polyline
           (pts
             (xy -0.762 1.27)
@@ -429,9 +429,9 @@
           (fill (type none))
         )
       )
-      (symbol "+8V_1_1"
+      (symbol "+5V_1_1"
         (pin power_in line (at 0 0 90) (length 0) hide
-          (name "+8V" (effects (font (size 1.27 1.27))))
+          (name "+5V" (effects (font (size 1.27 1.27))))
           (number "1" (effects (font (size 1.27 1.27))))
         )
       )
@@ -485,9 +485,9 @@
   (no_connect (at 85.09 66.04) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619135))
   (no_connect (at 85.09 53.34) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619136))
   (no_connect (at 120.65 48.26) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619137))
-  (no_connect (at 120.65 45.72) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619138))
   (no_connect (at 85.09 58.42) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc5619139))
   (no_connect (at 85.09 60.96) (uuid 4f1d20b3-eb35-4b30-91a8-d99fc561913a))
+  (no_connect (at 120.65 43.18) (uuid de488b14-2b95-4066-a6ab-c2166534068a))
 
   (wire (pts (xy 139.7 78.74) (xy 143.51 78.74))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -501,10 +501,6 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 068c8b51-828c-4a11-88f0-5a6bc1470473)
   )
-  (wire (pts (xy 127 43.18) (xy 127 38.1))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 0e8d638d-8eb2-43e9-a774-ea40a59e9fb5)
-  )
   (wire (pts (xy 139.7 101.6) (xy 143.51 101.6))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 0f714aa6-1897-4939-8e11-45bc4d85a0f7)
@@ -516,10 +512,6 @@
   (wire (pts (xy 120.65 99.06) (xy 124.46 99.06))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 1320219e-e570-4120-8b0f-ac6db120ac44)
-  )
-  (wire (pts (xy 120.65 43.18) (xy 127 43.18))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 17135b67-e37b-4d43-80e0-619a9b8dde2c)
   )
   (wire (pts (xy 81.28 91.44) (xy 85.09 91.44))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -589,6 +581,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 63f06b0b-c40a-4aeb-b5b4-076817caa6c2)
   )
+  (wire (pts (xy 128.27 45.72) (xy 120.65 45.72))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 6489f991-616f-4794-a623-09ec058b2307)
+  )
   (wire (pts (xy 62.23 86.36) (xy 66.04 86.36))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 659b0bd8-1a6c-4311-9124-35348ed9c526)
@@ -612,6 +608,10 @@
   (wire (pts (xy 81.28 86.36) (xy 85.09 86.36))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 9008f959-0fcf-44ff-8f7d-8b43a955010c)
+  )
+  (wire (pts (xy 128.27 40.64) (xy 128.27 45.72))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 9858d79e-eaaa-43d1-a5ed-c53cfa9a29a8)
   )
   (wire (pts (xy 81.28 134.62) (xy 85.09 134.62))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -954,20 +954,20 @@
     (pin "VIN_2" (uuid ad317120-4da1-4d8c-83c2-a98d79d415d0))
   )
 
-  (symbol (lib_id "power:+8V") (at 127 38.1 0) (unit 1)
+  (symbol (lib_id "power:+5V") (at 128.27 40.64 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid 46daeb1d-2b42-43af-8d9c-b8a1e124ec13)
-    (property "Reference" "#PWR?" (id 0) (at 127 41.91 0)
+    (uuid 6eec8315-d166-4bd1-b370-f69e113e2d61)
+    (property "Reference" "#PWR?" (id 0) (at 128.27 44.45 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Value" "+8V" (id 1) (at 127 33.02 0))
-    (property "Footprint" "" (id 2) (at 127 38.1 0)
+    (property "Value" "+5V" (id 1) (at 128.27 35.56 0))
+    (property "Footprint" "" (id 2) (at 128.27 40.64 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "" (id 3) (at 127 38.1 0)
+    (property "Datasheet" "" (id 3) (at 128.27 40.64 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 46a3a7bb-97a2-4528-bad2-d158a79df86b))
+    (pin "1" (uuid e411ef19-a46d-4c50-a20c-9ccf1d854cf6))
   )
 
   (symbol (lib_id "power:GND") (at 123.19 167.64 0) (unit 1)
@@ -1525,11 +1525,14 @@
     (path "/e669b97c-3437-4faa-b176-8136fb97a507/e949520c-ed55-4426-950d-6672da5ea1c3"
       (reference "#PWR0158") (unit 1) (value "+12V") (footprint "")
     )
+    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/2a4e254b-7c0c-4673-a8aa-40c6e531188f"
+      (reference "#PWR?") (unit 1) (value "+5V") (footprint "")
+    )
     (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/2dbbf750-c1db-47bf-9f50-fe0096e42311"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
-    (path "/46daeb1d-2b42-43af-8d9c-b8a1e124ec13"
-      (reference "#PWR?") (unit 1) (value "+8V") (footprint "")
+    (path "/6eec8315-d166-4bd1-b370-f69e113e2d61"
+      (reference "#PWR?") (unit 1) (value "+5V") (footprint "")
     )
     (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/c0053588-042a-47dc-a931-96eae35313ea"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
@@ -1537,17 +1540,14 @@
     (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/cc4739ec-56e7-481e-835f-453044369200"
       (reference "#PWR?") (unit 1) (value "+12V") (footprint "")
     )
-    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/e1e8ab93-53e2-49b4-80f5-4568cb3bae24"
-      (reference "#PWR?") (unit 1) (value "+8V") (footprint "")
-    )
     (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/21e0713d-6e7c-4f1e-bdd7-ce1b31e2fa5a"
       (reference "C?") (unit 1) (value "100uF") (footprint "")
     )
     (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/d3ee5e22-3226-4c44-8f80-fd50ea4805fb"
-      (reference "C?") (unit 1) (value "1000uF") (footprint "")
+      (reference "C?") (unit 1) (value "330uF") (footprint "")
     )
-    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/11dc93c9-bf89-40e4-8c56-fa5713df8ffa"
-      (reference "D?") (unit 1) (value "D_Schottky") (footprint "")
+    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/a5bc8825-a19e-48e0-b5c8-d712b25abbd3"
+      (reference "D?") (unit 1) (value "1N5819") (footprint "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
     )
     (path "/c7e53204-9134-4b28-b397-09a3f9880698/c1eefc4b-76f4-40c3-b933-ab586706af53"
       (reference "J1") (unit 1) (value "Conn_01x04_Male") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical")
@@ -1720,17 +1720,11 @@
     (path "/e669b97c-3437-4faa-b176-8136fb97a507/97fecf05-5c81-440b-89af-81913c97f06d"
       (reference "Q42") (unit 1) (value "FDN337N") (footprint "FDN337N:ON_Semi-527AG-01-12_2008-O-IPC_B")
     )
-    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/3510120f-b9d4-4bef-8743-b3c495a69b5b"
-      (reference "R?") (unit 1) (value "R") (footprint "Resistor_SMD:R_0805_2012Metric")
-    )
-    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/a88e6fef-131b-44ae-90d1-20b3e463b092"
-      (reference "R?") (unit 1) (value "R") (footprint "Resistor_SMD:R_0805_2012Metric")
-    )
     (path "/25cf98c8-de8d-4b21-86b9-2563caa0bbdb"
       (reference "U1") (unit 1) (value "MEGA_PRO_EMBED_CH340G_{slash}_ATMEGA2560") (footprint "kicad:MEGA_PRO_EMBED_CH340G___ATMEGA2560")
     )
-    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/97954bdd-6f0e-481b-b33b-a2801266daa9"
-      (reference "U?") (unit 1) (value "LM2576T-ADJG") (footprint "LM2576T-ADJG:LM2576T-ADJG")
+    (path "/c11913c3-97db-4bc4-9b11-925f21417dd2/e1e48912-b703-4c2a-a362-9c02ff10e8a1"
+      (reference "U?") (unit 1) (value "LM2575T-5.0") (footprint "kicad-ss-libs:LM2576T-ADJG")
     )
   )
 )
