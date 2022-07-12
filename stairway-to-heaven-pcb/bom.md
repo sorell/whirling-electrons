@@ -1,3 +1,10 @@
+# Checklist
+
+* Check that analog pins work also as digital pins
+* Rest of the VIAs
+* Check ground pins' layout near VIN1 and VIN2
+* Place 0 ohm for those grounds that travel over thick 12V line?
+
 # BOM
 
 | Component     | € / 1 pcs | pcs | Link | Datasheet | Comment |
