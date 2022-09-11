@@ -25,23 +25,48 @@
 #endif
 
 
-struct Led
+class LedIo
 {
-	Led() : r(0), g(0), b(0)
+public:
+	LedIo(uint8_t pin) : _reg(portOutputRegister(digitalPinToPort(pin))), _bitMask(digitalPinToBitMask(pin))
 	{}
 
-	Led(uint16_t rValue, uint16_t gValue, uint16_t bValue) : r(rValue), g(gValue), b(bValue)
-	{}
+	__attribute__((always_inline)) void set() const
+	{
+		*_reg |= _bitMask;
+	}
 
-	uint16_t r;
-	uint16_t g;
-	uint16_t b;
+	__attribute__((always_inline)) void clr() const
+	{
+		*_reg &= ~_bitMask;
+	}
+
+	__attribute__((always_inline)) void write(int value) const
+	{
+		if (value >= 0)
+			set();
+		else
+			clr();
+	}
+
+	__attribute__((always_inline)) void write(uint8_t *const byte, int value) const
+	{
+		if (value >= 0)
+			*byte |= _bitMask;
+		else
+			*byte &= ~_bitMask;
+	}
+
+private:
+	uint8_t volatile *const _reg;
+	uint8_t const _bitMask;
 };
 
 
-struct LedStrip
+class LedStrip
 {
-	LedStrip(uint8_t pinR, uint8_t pinG, uint8_t pinB) : _pinR(pinR), _pinG(pinG), _pinB(pinB)
+public:
+	LedStrip(uint8_t pinR, uint8_t pinG, uint8_t pinB) : _ledIoR(pinR), _ledIoG(pinG), _ledIoB(pinB), _ledBrightnessR(0), _ledBrightnessG(0), _ledBrightnessB(0)
 	{
 		digitalWrite(pinR, 1);
 		digitalWrite(pinG, 1);
@@ -49,6 +74,13 @@ struct LedStrip
 		pinMode(pinR, OUTPUT);
 		pinMode(pinG, OUTPUT);
 		pinMode(pinB, OUTPUT);
+	}
+
+	__attribute__((always_inline)) void set() const
+	{
+		_ledIoR.set();
+		_ledIoG.set();
+		_ledIoB.set();
 	}
 
 	void write(uint16_t frame) const
@@ -61,36 +93,50 @@ struct LedStrip
 		//  - 255 => all 256 frames are lit.
 		// Calculate this in if-less way: MSB of uint16_t signifies is the frame lit or not.
 		++frame;
-		digitalWrite(_pinR, (led.r - frame) >> 15);
-		digitalWrite(_pinG, (led.r - frame) >> 15);
-		digitalWrite(_pinB, (led.r - frame) >> 15);
+
+		_ledIoR.write(_ledBrightnessR - frame);
+		_ledIoG.write(_ledBrightnessG - frame);
+		_ledIoB.write(_ledBrightnessB - frame);
+
+		// digitalWrite(_pinR, (_ledBrightnessR - frame) >> 15);
+		// digitalWrite(_pinG, (_ledBrightnessG - frame) >> 15);
+		// digitalWrite(_pinB, (_ledBrightnessB - frame) >> 15);
 	}
 
-	const uint8_t _pinR;
-	const uint8_t _pinG;
-	const uint8_t _pinB;
-	Led led;
+	void write(uint8_t *const byte, int frame) const
+	{
+		_ledIoR.write(byte, _ledBrightnessR - frame);
+		_ledIoG.write(byte, _ledBrightnessG - frame);
+		_ledIoB.write(byte, _ledBrightnessB - frame);
+	}
+
+private:
+	LedIo const _ledIoR;
+	LedIo const _ledIoG;
+	LedIo const _ledIoB;
+
+public:
+	uint16_t _ledBrightnessR;
+	uint16_t _ledBrightnessG;
+	uint16_t _ledBrightnessB;
 };
 
 static LedStrip strips[]
 {
+	{11, 10, 8},
+	{3, 4, 2},
+	{14, 15, 13},
+	{7, 9, 6},
+	{17, 18, 16},
+	{21, 22, 20},
 	{30, 31, 29},
-	{7, 6, 8},
-	{3, 2, 4},
-	{10, 9, 11},
-
-	{7, 6, 8},
-	{3, 2, 4},
-	{10, 9, 11},
-	{7, 6, 8},
-	{3, 2, 4},
-	{10, 9, 11},
-	{7, 6, 8},
-	{3, 2, 4},
-	{10, 9, 11},
-	{7, 6, 8},
-	{3, 2, 4},
-	{10, 9, 11},
+	{A11, A9, A13},
+	{A0, A1, A2},
+	{33, A14, 32},
+	{A5, A4, A11},
+	{34, 35, 37},
+	{38, 39, 40},
+	{48, 49, 51}
 };
 
 static constexpr int stripCount = sizeof(strips) / sizeof(strips[0]);
@@ -99,22 +145,21 @@ static constexpr int stripCount = sizeof(strips) / sizeof(strips[0]);
 static BtnDebounce button(BUTTON_IN, 0);
 
 
-// Enable printf
-int SerialPutc(char c, __attribute__((unused)) FILE* f)
+// Printf callback function
+int SerialPutc(char c, __attribute__((unused)) FILE *f)
 {
 	return Serial.write(c);
 }
 
 
+// 3 * 14 looped writes = 24 us
+// 3 * 14 inlined set functions (or) = 40 us
+// 3 * 14 inlined set functions (assign) = 32 us
+
 void setup()
 {
-	// pinMode(BUTTON_IN, INPUT_PULLUP);
-	// digitalWrite(LED1_OUT, 1);
-	// digitalWrite(LED2_OUT, 1);
-	// digitalWrite(LED3_OUT, 1);
-	// pinMode(LED1_OUT, OUTPUT);
-	// pinMode(LED2_OUT, OUTPUT);
-	// pinMode(LED3_OUT, OUTPUT);
+	pinMode(BUTTON_IN, INPUT_PULLUP);
+
 	
 	Serial.begin(115200);
 	fdevopen(&SerialPutc, 0);
@@ -127,14 +172,43 @@ void setup()
 	// while ((micros() & PERIOD_BITMASK) == currentPeriod);
 
 
-	uint16_t ledr = 256;
-	for (int i=0; i<257; ++i)
+	auto const &strip = strips[0];
+	uint8_t volatile *const reg = portOutputRegister(digitalPinToPort(31));
+	uint8_t byte[stripCount] = {0};
+	uint8_t _bitMask = 0x30;
+
+	unsigned long const t0 = micros();
+
+	for (auto const &strip: strips)
+	// for (int i=0; i<stripCount; ++i)
 	{
-		uint16_t frame = i + 1;
-		uint8_t result = (uint8_t)((ledr - frame) >> 15);
-		printf("led %d at frame %d = %d\n", ledr, i, result);
+		strip.set();
+		// strips[i].write(&byte[i], 1);
 	}
-	while (1);
+
+	// digitalWriteFast(11, 1);
+	// digitalWriteFast(10, 1);
+	// digitalWriteFast(8, 1);
+
+
+	unsigned long const t1 = micros();
+
+	printf("write all %lu\n", t1 - t0);
+
+	for (auto b: byte)
+	{
+		printf("Byte %x\n", b);
+	}
+
+
+	while (1)
+	{
+		break;
+		// strips[6].write(1);
+		// delay(1000);
+		// strips[6].write(0);
+		// delay(1000);
+	}
 }
 
 
@@ -156,8 +230,91 @@ static void processSensors()
 }
 
 
+struct ColorDelta
+{
+	int16_t r;
+	int16_t g;
+	int16_t b;
+};
+
+
+static ColorDelta colorDelta[stripCount]
+{
+	{4000, 0, 0},
+	{0, 4000, 0},
+	{0, 0, 4000},
+	{4000, 0, 0},
+	{0, 4000, 0},
+	{0, 0, 4000},
+	{4000, 0, 0},
+	{0, 4000, 0},
+	{0, 0, 4000},
+	{4000, 0, 0},
+	{0, 4000, 0},
+	{0, 0, 4000},
+	{0, 4000, 0},
+	{0, 0, 4000}
+};
+
+
+static void fadeUpLights()
+{
+	auto inc = [](uint16_t &value, int16_t increment)
+	{
+		uint16_t const result = value + increment;
+		if (value < result) {
+			value = result;
+		}
+	};
+
+
+	int i = 0;
+
+	do
+	{
+		unsigned long now = micros();
+	// printf("in %lu\n", now & 0x7F800);
+		if ((now & 0x1F800) != 0x1F800) {
+			continue;
+		}
+
+		// for (int stage = i >> 2; stage >= 0; --stage)
+		// {
+		// 	strips[stage]._ledBrightnessR += colorDelta[stage].r;
+		// 	strips[stage]._ledBrightnessG += colorDelta[stage].g;
+		// 	strips[stage]._ledBrightnessB += colorDelta[stage].b;
+		// }
+
+	// debug for loop
+		for (int stage = 0; stage < stripCount; ++stage)
+		{
+			inc(strips[stage]._ledBrightnessR, colorDelta[stage].r);
+			inc(strips[stage]._ledBrightnessG, colorDelta[stage].g);
+			inc(strips[stage]._ledBrightnessB, colorDelta[stage].b);
+		}
+	unsigned long const t1 = micros();
+	printf("write all %lu\n", t1 - now);
+	
+		++i;
+
+		int idx = 0;
+		for (auto const &strip: strips)
+		{
+			printf("%d: %d, %d, %d\n", idx++, strip._ledBrightnessR >> 8, strip._ledBrightnessG >> 8, strip._ledBrightnessB >> 8);
+		}
+	} while (strips[0]._ledBrightnessR < 60000);
+}
+
+
 void loop()
 {
+	fadeUpLights();
+
+
+
+	while (1);
+
+
 	// static uint8_t constexpr brightnessInc = 64;
 	// static uint8_t brightness = 0;
 	// static uint8_t mode = 1;
