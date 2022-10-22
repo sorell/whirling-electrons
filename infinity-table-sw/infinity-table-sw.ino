@@ -3,7 +3,7 @@
 #include "algorithms.h"
 #include "debug.h"
 
-#define DATA_PIN 9
+#define DATA_PIN 2
 #define MAX_BRIGHT 255
 
 
