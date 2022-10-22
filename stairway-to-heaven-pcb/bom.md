@@ -1,11 +1,9 @@
 # Checklist
 
 * SENSORS!
-* Screw holes (3,2mm?)
 * Check that analog pins work also as digital pins
 * Check ground pins' layout near VIN1 and VIN2
 * Signature
-* Trimmer
 
 # BOM
 

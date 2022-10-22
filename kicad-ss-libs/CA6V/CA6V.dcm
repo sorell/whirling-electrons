@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP CA6V
+D Potentionmeter
+K
+F https://static.chipdip.ru/lib/053/DOC000053676.pdf
+$ENDCMP
+#
+#End Doc Library
