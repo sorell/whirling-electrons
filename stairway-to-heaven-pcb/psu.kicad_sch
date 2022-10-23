@@ -4,6 +4,10 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Stairway to Heaven")
+  )
+
   (lib_symbols
     (symbol "Device:C" (pin_numbers hide) (pin_names (offset 0.254)) (in_bom yes) (on_board yes)
       (property "Reference" "C" (id 0) (at 0.635 2.54 0)
@@ -450,6 +454,7 @@
       )
     )
   )
+
 
   (junction (at 205.74 106.68) (diameter 0) (color 0 0 0 0)
     (uuid 14c95e1d-240b-40a4-a538-3c00018f0dec)

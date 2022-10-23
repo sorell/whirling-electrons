@@ -1,9 +1,7 @@
 # Checklist
 
 * SENSORS!
-* Check that analog pins work also as digital pins
-* Check ground pins' layout near VIN1 and VIN2
-* Signature
+* Sensor silks
 
 # BOM
 
