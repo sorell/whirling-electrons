@@ -2,6 +2,9 @@
 
 * SENSORS!
 * Sensor silks
+* Double-check sensor input ports react to 3V3
+
+
 
 # BOM
 
