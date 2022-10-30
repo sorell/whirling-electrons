@@ -1,6 +1,5 @@
 # Checklist
 
-* SENSORS!
 * Sensor silks
 * Double-check sensor input ports react to 3V3
 
@@ -15,7 +14,7 @@
 | Regulator components  | 4,7      | 1   | - | - | Voltage Regulator components |
 | FDN337N       | 0,31      | 42  | [link](https://www.triopak.fi/fi/tuote/FDN337N) | [link](https://www.triopak.fi/files/product/Fairchild/FDN337N_eng_datasheet.pdf) | Mos N-Fet 30V 2,2A 65mohms, SOT-23 |
 | Led strip     | 7,59      | 3   | [link](https://www.aliexpress.com/item/32903257649.html) | - | RGB LED strip, 5m, smd 5050 |
-| 3386P503      | 0,36      | 1   | [link](https://www.triopak.fi/fi/tuote/3386P503) | - | Trimmer potentiometer, 50 kOhm
+| 3386P503      | 0,36      | 1   | [link](https://www.triopak.fi/fi/tuote/3386P503) | - | Screw terminal
 | xxxxxxx       |           |     |   |   |   |
 | Total cost    | 65,71     |     |   |   |   |
 
