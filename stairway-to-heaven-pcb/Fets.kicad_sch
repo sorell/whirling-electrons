@@ -681,10 +681,10 @@
     (uuid e17d29e2-0644-4966-995b-f03b91bd4572)
   )
 
-  (symbol (lib_id "power:GND") (at 106.68 114.3 0)
+  (symbol (lib_id "power:GND") (at 106.68 114.3 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 0e3e8dbc-ddc7-40fc-a10a-28e14606eb80)
-    (property "Reference" "#PWR?" (id 0) (at 106.68 120.65 0)
+    (property "Reference" "#PWR0103" (id 0) (at 106.68 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 106.68 119.38 0))
@@ -697,7 +697,7 @@
     (pin "1" (uuid efc8f1b1-e26b-4dcb-9909-745df981a878))
   )
 
-  (symbol (lib_id "Device:R") (at 101.6 113.03 90)
+  (symbol (lib_id "Device:R") (at 101.6 113.03 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 101131db-475d-4275-89d4-ac43ee9a25d5)
     (property "Reference" "R4" (id 0) (at 101.6 115.57 90))
@@ -712,10 +712,10 @@
     (pin "2" (uuid 2733a655-db42-498b-a705-184e4fe256a3))
   )
 
-  (symbol (lib_id "power:GND") (at 134.62 114.3 0)
+  (symbol (lib_id "power:GND") (at 134.62 114.3 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 5265b37f-07e3-467f-b19c-5eb6ca78b78c)
-    (property "Reference" "#PWR?" (id 0) (at 134.62 120.65 0)
+    (property "Reference" "#PWR0105" (id 0) (at 134.62 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 134.62 119.38 0))
@@ -728,7 +728,7 @@
     (pin "1" (uuid a4841002-0681-4077-bc23-ac3371dcea83))
   )
 
-  (symbol (lib_id "FDN337N:FDN337N") (at 96.52 105.41 0)
+  (symbol (lib_id "FDN337N:FDN337N") (at 96.52 105.41 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 79e8c53a-906c-443b-8cd4-6097bcb94ef4)
     (property "Reference" "Q1" (id 0) (at 110.49 104.1399 0)
@@ -850,10 +850,10 @@
     (pin "3" (uuid 234bcfcf-3bff-4716-b6c3-2f5bddca6433))
   )
 
-  (symbol (lib_id "power:GND") (at 162.56 114.3 0)
+  (symbol (lib_id "power:GND") (at 162.56 114.3 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 880080f7-1261-43c8-98fe-55aa41a862e9)
-    (property "Reference" "#PWR?" (id 0) (at 162.56 120.65 0)
+    (property "Reference" "#PWR0106" (id 0) (at 162.56 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 162.56 119.38 0))
@@ -866,7 +866,7 @@
     (pin "1" (uuid 10c3893f-272b-42dc-b850-cb0ec45c4333))
   )
 
-  (symbol (lib_id "FDN337N:FDN337N") (at 152.4 105.41 0)
+  (symbol (lib_id "FDN337N:FDN337N") (at 152.4 105.41 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 97fecf05-5c81-440b-89af-81913c97f06d)
     (property "Reference" "Q3" (id 0) (at 166.37 104.1399 0)
@@ -988,7 +988,7 @@
     (pin "3" (uuid 98d478ae-1ac6-4a65-967b-635bee0167e1))
   )
 
-  (symbol (lib_id "Connector:Conn_01x04_Male") (at 172.72 90.17 0) (mirror y)
+  (symbol (lib_id "Connector:Conn_01x04_Male") (at 172.72 90.17 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid c1eefc4b-76f4-40c3-b933-ab586706af53)
     (property "Reference" "J1" (id 0) (at 173.99 90.1699 0)
@@ -1009,7 +1009,7 @@
     (pin "4" (uuid d9718e72-321e-4c92-baf1-b22459db89d3))
   )
 
-  (symbol (lib_id "FDN337N:FDN337N") (at 124.46 105.41 0)
+  (symbol (lib_id "FDN337N:FDN337N") (at 124.46 105.41 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid d9a50018-f11c-481e-b0dd-b6744b2afeba)
     (property "Reference" "Q2" (id 0) (at 138.43 104.1399 0)
@@ -1131,7 +1131,7 @@
     (pin "3" (uuid 26bb7ddb-4fe6-4db1-8d72-4195a73fd8a5))
   )
 
-  (symbol (lib_id "power:+12V") (at 163.83 83.82 0)
+  (symbol (lib_id "power:+12V") (at 163.83 83.82 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid e949520c-ed55-4426-950d-6672da5ea1c3)
     (property "Reference" "#PWR0104" (id 0) (at 163.83 87.63 0)
@@ -1147,7 +1147,7 @@
     (pin "1" (uuid 18728706-fe11-4492-80e9-6eb9f030261a))
   )
 
-  (symbol (lib_id "Device:R") (at 157.48 113.03 270)
+  (symbol (lib_id "Device:R") (at 157.48 113.03 270) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid ec3a0d1a-f31c-446d-934b-b9d0a30a4d67)
     (property "Reference" "R6" (id 0) (at 157.48 115.57 90))
@@ -1162,7 +1162,7 @@
     (pin "2" (uuid c24f6dda-4e88-46d6-891a-2292666a3f6c))
   )
 
-  (symbol (lib_id "Device:R") (at 129.54 113.03 90)
+  (symbol (lib_id "Device:R") (at 129.54 113.03 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid ede82a11-8f5c-4b80-9a2f-e6845171235f)
     (property "Reference" "R5" (id 0) (at 129.54 115.57 90))

@@ -1,5 +1,5 @@
 
-(module MODULE_MEGA_PRO_EMBED_CH340G_/_ATMEGA2560 (layer F.Cu) (tedit 62448494)
+(footprint MODULE_MEGA_PRO_EMBED_CH340G_/_ATMEGA2560 (layer F.Cu) (tedit 638F84FE)
   (descr "")
   (fp_text reference REF** (at -23.295 -19.685 0) (layer F.SilkS)
     (effects (font (size 1.0 1.0) (thickness 0.15)))

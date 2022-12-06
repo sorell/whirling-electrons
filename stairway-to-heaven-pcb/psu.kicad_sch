@@ -455,6 +455,7 @@
     )
   )
 
+
   (junction (at 205.74 106.68) (diameter 0) (color 0 0 0 0)
     (uuid 14c95e1d-240b-40a4-a538-3c00018f0dec)
   )
@@ -859,7 +860,7 @@
     (property "Value" "LM2575T-5.0" (id 1) (at 148.59 78.74 0)
       (effects (font (size 1.524 1.524)))
     )
-    (property "Footprint" "kicad-ss-libs:LM2575T-5.0" (id 2) (at 148.59 98.044 0)
+    (property "Footprint" "LM2575T-5:LM2575T-5.0" (id 2) (at 148.59 98.044 0)
       (effects (font (size 1.524 1.524)) hide)
     )
     (property "Datasheet" "" (id 3) (at 148.59 96.52 0)
