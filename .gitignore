@@ -29,3 +29,6 @@ fp-info-cache
 *.xml
 *.csv
 
+fp-lib-table
+sym-lib-table
+
