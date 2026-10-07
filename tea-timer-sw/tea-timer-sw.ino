@@ -807,8 +807,8 @@ bool animateMotd(void)
 
 		out |= checkButtons();
 
-		display.setAddrWindow(0, 0, width, height);
 		display.startWrite();
+		display.setAddrWindow(0, 0, width, height);
 
 		if (offset < 0) {
 			display.writeColor(BLACK, -offset * motdWidth);
@@ -912,8 +912,8 @@ void animateSteam(int offset, int x, int y)
 {
 	int constexpr rowBytes = (steamPicWidth + 3) / 4;
 
-	display.setAddrWindow(x, y, steamPicWidth, steamPicHeight);
 	display.startWrite();
+	display.setAddrWindow(x, y, steamPicWidth, steamPicHeight);
 	draw2bitData(steamPicData + offset * rowBytes, steamPicPalette, steamPicWidth, steamPicHeight - offset);
 	draw2bitData(steamPicData, steamPicPalette, steamPicWidth, offset);
 	display.endWrite();
@@ -925,8 +925,8 @@ void teacupAnimation(void)
 	display.fillScreen(BLACK);
 
 	// Draw teacup
-	display.setAddrWindow(26, 25, teacupPicWidth, teacupPicHeight);
 	display.startWrite();
+	display.setAddrWindow(26, 25, teacupPicWidth, teacupPicHeight);
 	draw2bitData(teacupPicData, teacupPicPalette, teacupPicWidth, teacupPicHeight);
 	display.endWrite();
 
@@ -959,8 +959,8 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 	display.fillScreen(BLACK);
 
 	// Draw teacup
-	display.setAddrWindow(26, 25, teacupPicWidth, teacupPicHeight);
 	display.startWrite();
+	display.setAddrWindow(26, 25, teacupPicWidth, teacupPicHeight);
 	draw2bitData(teacupPicData, teacupPicPalette, teacupPicWidth, teacupPicHeight);
 	display.endWrite();
 
@@ -975,8 +975,8 @@ void teacupAnimationWithSong(SongPart const *const songParts, int const parts)
 	Note const *note = songPart->notes;
 
 	while (cont) {
-		display.setAddrWindow(39, 13, steamPicWidth, steamPicHeight);
 		display.startWrite();
+		display.setAddrWindow(39, 13, steamPicWidth, steamPicHeight);
 
 		// This animates the steam
 		int row = heightOffset;
